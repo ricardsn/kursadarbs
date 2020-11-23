@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Map;
+use App\Models\Fish;
 use Illuminate\Http\Request;
 
-class MapController extends Controller
+class FishController extends Controller
 {
-
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return view('map.index');
+        //
     }
 
     /**
@@ -23,7 +24,7 @@ class MapController extends Controller
      */
     public function create()
     {
-       //
+        //
     }
 
     /**
@@ -37,35 +38,24 @@ class MapController extends Controller
         //
     }
 
-
     /**
-     * @param Map $map
-     * @return Map[]|array|\Illuminate\Database\Eloquent\Collection
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Fish  $fish
+     * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show(Fish $fish)
     {
-        $data = [];
-        try {
-            $data = Map::all();
-            $data->toJson();
-        }
-        catch (\mysql_xdevapi\Exception $exception) {
-            $data = [
-                'status' => 'error',
-                'message' => $exception
-            ];
-            $data->toJson();
-        }
-        return $data;
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Map  $map
+     * @param  \App\Models\Fish  $fish
      * @return \Illuminate\Http\Response
      */
-    public function edit(Map $map)
+    public function edit(Fish $fish)
     {
         //
     }
@@ -74,10 +64,10 @@ class MapController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Map  $map
+     * @param  \App\Models\Fish  $fish
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Map $map)
+    public function update(Request $request, Fish $fish)
     {
         //
     }
@@ -85,10 +75,10 @@ class MapController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Map  $map
+     * @param  \App\Models\Fish  $fish
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Map $map)
+    public function destroy(Fish $fish)
     {
         //
     }

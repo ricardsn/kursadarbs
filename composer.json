@@ -16,7 +16,8 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
         "twbs/bootstrap": "4.3.1",
-      "ext-mysql_xdevapi": "*"
+      "ext-mysql_xdevapi": "*",
+      "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",

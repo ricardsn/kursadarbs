@@ -60671,9 +60671,11 @@ module.exports = function(module) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(/*! ./water-map */ "./resources/js/water-map.js");
+
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-__webpack_require__(/*! ./water-map */ "./resources/js/water-map.js");
+__webpack_require__(/*! ./map/create-dropdown */ "./resources/js/map/create-dropdown.js");
 
 /***/ }),
 
@@ -60719,6 +60721,24 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/map/create-dropdown.js":
+/*!*********************************************!*\
+  !*** ./resources/js/map/create-dropdown.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+$(document).ready(function () {
+  $('#fish-dropdown').multiselect({
+    nonSelectedText: 'Select fishes',
+    enableFiltering: true,
+    enableCaseInsensitiveFiltering: true,
+    buttonWidth: '400px'
+  });
+});
 
 /***/ }),
 
@@ -61187,10 +61207,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js"), __webpack_require__(/*! esri-leaflet */ "./node_modules/esri-leaflet/src/EsriLeaflet.js"), __webpack_require__(/*! esri-leaflet-geocoder */ "./node_modules/esri-leaflet-geocoder/dist/esri-leaflet-geocoder-debug.js"), __webpack_require__(/*! ./vendor/bootstrap-geocoder */ "./resources/js/vendor/bootstrap-geocoder.js"), __webpack_require__(/*! ./vendor/leaflet.geometryutil */ "./resources/js/vendor/leaflet.geometryutil.js"), __webpack_require__(/*! leaflet.markercluster */ "./node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function ($, L, esri, geocoder, BootstrapGeocoder, geometryutil) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! leaflet */ "./node_modules/leaflet/dist/leaflet-src.js"), __webpack_require__(/*! esri-leaflet */ "./node_modules/esri-leaflet/src/EsriLeaflet.js"), __webpack_require__(/*! esri-leaflet-geocoder */ "./node_modules/esri-leaflet-geocoder/dist/esri-leaflet-geocoder-debug.js"), __webpack_require__(/*! ./vendor/bootstrap-geocoder */ "./resources/js/vendor/bootstrap-geocoder.js"), __webpack_require__(/*! ./vendor/leaflet.geometryutil */ "./resources/js/vendor/leaflet.geometryutil.js"), __webpack_require__(/*! leaflet.markercluster */ "./node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function ($, L, esri, geocoder, BootstrapGeocoder) {
   "use strict";
 
   var mymap = L.map('mapid').setView([56.9496, 24.1052], 7);
+  var markers = L.markerClusterGroup();
+  var selector = $('#radius-selector');
+  var radius = 0;
+  var location = null;
+  var searchButton = document.getElementById('searchButton');
+  var reservoirs = null;
+  var displayReservoirs = [];
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -61209,7 +61236,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   });
   $.ajax({
-    url: 'map/show',
+    url: '/reservoir/show',
     dataFormat: 'json',
     data: {
       page: 1,
@@ -61225,15 +61252,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       lastIndex: 1
     },
     success: function success(data) {
-      var reservoirs = data; // let countryStores = stores;
-      // let selectedCountry = 'All';
-      // let selectedCountryCode = '';
-
+      reservoirs = data;
       $.each(reservoirs, function (index, reservoir) {
-        /*map.addLayer(markers);
-        addToList(store);*/
         addStoreToMap(reservoir);
       });
+      mymap.addLayer(markers);
     },
     error: function error(err) {
       alert("Error : " + JSON.stringify(err));
@@ -61243,17 +61266,68 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   function addStoreToMap(reservoir) {
     var marker = L.marker([reservoir['lat'], reservoir['long']], {
       icon: customIcon
-    }).bindPopup(reservoir['name'] + reservoir['type']).addTo(mymap); // markers.addLayer(marker);
-    // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
+    }).bindPopup(reservoir['name'] + reservoir['type']);
+    markers.addLayer(marker); // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
   }
 
   var search = BootstrapGeocoder.search({
     inputTag: 'address-search',
     placeholder: 'To find nearest store, enter your address here...',
-    zoomToResult: true,
+    zoomToResult: false,
     useMapBounds: false,
     allowMultipleResults: false
   }).addTo(mymap);
+  selector.change(function () {
+    var selection = selector[0].options;
+
+    if (selection[selection.selectedIndex].value !== 'All') {
+      radius = selection[selection.selectedIndex].value;
+    } else {
+      radius = 0;
+      addAllReservoirsToMap();
+    }
+  });
+  search.on('results', function (data) {
+    location = data.latlng;
+  });
+
+  function getDistance(lat1, lat2, lon1, lon2) {
+    //formula from https://www.movable-type.co.uk/scripts/latlong.html
+    var R = 6371e3;
+    var fi1 = lat1 * Math.PI / 180;
+    var fi2 = lat2 * Math.PI / 180;
+    var dFi = (lat2 - lat1) * Math.PI / 180;
+    var dLa = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dFi / 2) * Math.sin(dFi / 2) + Math.cos(fi1) * Math.cos(fi2) * Math.sin(dLa / 2) * Math.sin(dLa / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  searchButton.onclick = function () {
+    displayReservoirs = [];
+    markers.clearLayers();
+    $.each(reservoirs, function (index, reservoir) {
+      if (getDistance(parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng) <= radius * 1000) {
+        displayReservoirs.push(reservoir);
+        addStoreToMap(reservoir);
+      }
+    });
+    mymap.addLayer(markers);
+  };
+
+  function addAllReservoirsToMap() {
+    markers.clearLayers();
+    $.each(reservoirs, function (index, reservoir) {
+      addStoreToMap(reservoir);
+    });
+    mymap.addLayer(markers);
+  } //     mymap.on('click', addMarker);
+  //     function addMarker(e){
+  // // Add marker to reservoir at click location; add popup window
+  //         var newMarker = new L.circle(e.latlng, 1000).addTo(mymap);
+  //         console.log(e.latlng)
+  //     }
+
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

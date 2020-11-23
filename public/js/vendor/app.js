@@ -20800,8 +20800,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _esri_leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./esri-leaflet */ "./resources/js/vendor/esri-leaflet.js");
 /* harmony import */ var _esri_leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_esri_leaflet__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! esri-leaflet-geocoder */ "./node_modules/esri-leaflet-geocoder/dist/esri-leaflet-geocoder-debug.js");
-/* harmony import */ var esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! esri-leaflet-geocoder */ "./node_modules/esri-leaflet-geocoder/dist/esri-leaflet-geocoder-debug.js");
+/* harmony import */ var esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_2__);
 
 
 
@@ -20815,7 +20815,7 @@ var Search = leaflet__WEBPACK_IMPORTED_MODULE_0__["Layer"].extend({
     selectedStyle: "geocoder-control-selected"
   },
   initialize: function initialize(e) {
-    e.providers || (e.providers = [Object(esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_3__["arcgisOnlineProvider"])()]), leaflet__WEBPACK_IMPORTED_MODULE_0__["Util"].setOptions(this, e), this._geosearchCore = Object(esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_3__["geosearchCore"])(this, e), this._geosearchCore.addEventParent(this), this._geosearchCore._pendingSuggestions = [], this._geosearchCore._providers[0].addEventParent(this);
+    e.providers || (e.providers = [Object(esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_2__["arcgisOnlineProvider"])()]), leaflet__WEBPACK_IMPORTED_MODULE_0__["Util"].setOptions(this, e), this._geosearchCore = Object(esri_leaflet_geocoder__WEBPACK_IMPORTED_MODULE_2__["geosearchCore"])(this, e), this._geosearchCore.addEventParent(this), this._geosearchCore._pendingSuggestions = [], this._geosearchCore._providers[0].addEventParent(this);
   },
   _renderSuggestions: function _renderSuggestions(e) {
     var t,
@@ -26119,7 +26119,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       this._enforcingBounds || this.panInsideBounds(this.options.maxBounds);
     },
     _checkIfLoaded: function _checkIfLoaded() {
-      if (!this._loaded) throw new Error("Set map center and zoom first.");
+      if (!this._loaded) throw new Error("Set reservoir center and zoom first.");
     },
     _initEvents: function _initEvents(t) {
       this._targets = {};
@@ -27516,7 +27516,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       return o && (o.distance = Math.sqrt(n)), o;
     },
     getCenter: function getCenter() {
-      if (!this._map) throw new Error("Must add layer to map before using getCenter()");
+      if (!this._map) throw new Error("Must add layer to reservoir before using getCenter()");
       var t,
           i,
           e,
@@ -27631,7 +27631,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       return !this._latlngs.length || !this._latlngs[0].length;
     },
     getCenter: function getCenter() {
-      if (!this._map) throw new Error("Must add layer to map before using getCenter()");
+      if (!this._map) throw new Error("Must add layer to reservoir before using getCenter()");
       var t,
           i,
           e,

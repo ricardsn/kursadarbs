@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ReservoirController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,4 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('map', 'App\Http\Controllers\MapController');
+Route::any('/reservoir/saveCoordinates', [ReservoirController::class, 'saveCoordinates']);
+//Route::post('reservoir/getCoordinates','App\Http\Controllers\ReservoirController@getCoordinates')->name('getCoordinates');
+
+Route::resource('reservoir', 'App\Http\Controllers\ReservoirController');

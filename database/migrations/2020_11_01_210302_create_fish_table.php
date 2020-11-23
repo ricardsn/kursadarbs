@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMapTable extends Migration
+class CreateFishTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateMapTable extends Migration
      */
     public function up()
     {
-        Schema::create('maps', function (Blueprint $table) {
+        Schema::create('fish', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string('name');
-            $table->decimal('lat');
-            $table->decimal('long');
-            $table->string('type');
+            $table->text('desc');
+            $table->string('link');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateMapTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('maps');
+        Schema::dropIfExists('fish');
     }
 }
