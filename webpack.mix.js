@@ -15,4 +15,5 @@ mix.js('resources/js/app.js', 'public/js')
     .js('resources/js/vendor/app.js','public/js/vendor')
     .js('resources/js/water-map.js', 'public/js')
     .js('resources/js/map/create-map.js', 'public/js/map')
+    .js('resources/js/map/edit-map.js', 'public/js/map')
     .sass('resources/sass/app.scss', 'public/css');
