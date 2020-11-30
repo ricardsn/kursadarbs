@@ -6,3 +6,15 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+//leaflet
+@import "~leaflet/dist/leaflet.css";
+
+//components
+@import "components/header/header";
+@import "components/view/welcome";
+@import "components/view/map/index";
+
+//vendor
+@import "vendor/marker-cluster/MarkerCluster";
+@import "vendor/marker-cluster/MarkerCluster.Default";
