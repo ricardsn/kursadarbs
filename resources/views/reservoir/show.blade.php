@@ -10,6 +10,7 @@
             <th scope="col">Tips</th>
             <th scope="col">Izveidots</th>
             <th scope="col">Atjaunots</th>
+            <th scope="col">Opcijas</th>
         </tr>
         </thead>
         <tbody>
@@ -22,6 +23,10 @@
                 <td>{{ $coordinate->type }}</td>
                 <td>{{ $coordinate->created_at }}</td>
                 <td>{{ $coordinate->updated_at }}</td>
+                <td>
+                    <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $coordinate->id,'edit')  }}" class="button btn-info">Rediģēt</a>
+                    <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $coordinate->id,'delete')  }}" class="button btn-danger">Dzēst</a>
+                </td>
             </tr>
         @endforeach
         </tbody>

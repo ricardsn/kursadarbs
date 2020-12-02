@@ -12,7 +12,7 @@ define([
     let markers = L.layerGroup();
     const radiusSelector = document.getElementById('radius-select');
     const saveButton = document.getElementById('save-reservoir');
-
+    const url = window.location.pathname.replace('/edit','');
     // let createMap = L.map('createmap').setView([56.9496, 24.1052], 7);
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -33,6 +33,31 @@ define([
         radius = radiusSelector.value;
     }
 
+    $.ajax({
+        url: `${url}/getCoordinateEdit`,
+        dataFormat: 'json',
+        data: {
+
+        },
+        success: function (data) {
+            coordinates = data;
+            radius = coordinates[0].radius;
+            $.each(coordinates, function (index, coordinate) {
+                addStoreToMapLoad(coordinate);
+            });
+            mymap.addLayer(markers);
+        },
+        error: function (err) {
+            alert("Error : " + JSON.stringify(err));
+        }
+    });
+
+    function addStoreToMapLoad(coordinate) {
+        let marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']);
+        markers.addLayer(marker);
+        // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
+    }
+
     saveButton.onclick = () => {
         const name = $('#name').val();
         const lat = $('#lat').val();
@@ -43,7 +68,7 @@ define([
 
         $.ajax({
             method: "POST",
-            url: "/reservoir/saveCoordinates",
+            url:  `${url}/update`,
             dataType: 'html',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -58,7 +83,7 @@ define([
                 coordinates: JSON.stringify(coordinates)
             },
             success: function(data) {
-                alert('Successfully saved!');
+                alert('Successfully updated!');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(JSON.stringify(jqXHR));
@@ -71,7 +96,7 @@ define([
 
     mymap.on('click', addMarker);
     function addMarker(e){
-    // Add marker to reservoir at click location; add popup window
+        // Add marker to reservoir at click location
         var newMarker = new L.circle(e.latlng, parseInt(radius)).addTo(mymap);
         markers.addLayer(newMarker);
         coordinates.push(newMarker._latlng);
