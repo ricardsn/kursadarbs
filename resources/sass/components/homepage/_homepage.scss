@@ -1,0 +1,33 @@
+#homepage {
+    &.container {
+        max-width: 1440px;
+        padding: 0;
+
+        @include desktop() {
+            margin: 100px auto;
+        }
+
+        .row {
+            background: rgba(39, 39, 39, 0.8);
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+            margin: auto;
+
+            &-title {
+                text-align: center;
+                width: 100%;
+
+                @include desktop() {
+                    margin-bottom: 30px;
+                }
+            }
+
+            &-content {
+                text-align: justify;
+                max-width: 800px;
+                margin: auto;
+            }
+        }
+    }
+}

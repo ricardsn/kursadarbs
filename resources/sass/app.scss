@@ -1,8 +1,10 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-// Variables
+// Variables, mixins and media
 @import 'variables';
+@import "helpers/media";
+@import "helpers/mixins";
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
@@ -12,8 +14,14 @@
 
 //components
 @import "components/header/header";
+@import "components/nav/nav";
 @import "components/view/welcome";
 @import "components/view/map/index";
+@import "components/view/map/show";
+@import "components/homepage/homepage";
+@import "components/footer/footer";
+@import "components/main/main";
+@import "components/form/form";
 
 //vendor
 @import "vendor/marker-cluster/MarkerCluster";

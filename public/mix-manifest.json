@@ -2,6 +2,7 @@
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/js/map/create-map.js": "/js/map/create-map.js",
+    "/js/map/edit-map.js": "/js/map/edit-map.js",
     "/js/vendor/app.js": "/js/vendor/app.js",
     "/js/water-map.js": "/js/water-map.js"
 }

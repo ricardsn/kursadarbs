@@ -2,7 +2,7 @@
 @section('content')
     <div class="form-container">
         @csrf
-        <h3>Ūdenstilpnes pievienošana</h3>
+        <h3>Ūdenstilpnes rediģēšana</h3>
         <div class="form-group">
             <label>Nosaukums</label>
             <input class="form-control" type="text" id="name" name="name" required minlength="4" value="{{ $reservoir->name }}">
@@ -38,7 +38,7 @@
             </select>
 
         </div>
-        <button class="btn btn-outline-primary my-2 my-sm-0" id="save-reservoir">Pievienot</button>
+        <button class="btn btn-outline-primary my-2 my-sm-0" id="save-reservoir">Saglabāt izmaiņas</button>
     </div>
     <script src="{{ asset('js/map/edit-map.js')  }}"></script>
 @endsection

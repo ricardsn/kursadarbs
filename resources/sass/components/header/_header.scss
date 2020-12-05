@@ -1,0 +1,13 @@
+section {
+    &.Pike {
+        background: url("../../helpers/images/body/pike.jpg") no-repeat;
+        background-position-y: 45%;
+        @include setDefaultHeader();
+    }
+
+    &.Zander {
+        background: url("../../helpers/images/body/perch.jpg") no-repeat;
+        background-position-y: 55%;
+        @include setDefaultHeader();
+    }
+}

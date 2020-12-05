@@ -24,8 +24,12 @@
                 <td>{{ $coordinate->created_at }}</td>
                 <td>{{ $coordinate->updated_at }}</td>
                 <td>
-                    <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $coordinate->id,'edit')  }}" class="button btn-info">Rediģēt</a>
-                    <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $coordinate->id,'delete')  }}" class="button btn-danger">Dzēst</a>
+                    <form action="{{ route('reservoir.destroy',$coordinate->id) }}" method="POST">
+                    <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $coordinate->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         @endforeach
