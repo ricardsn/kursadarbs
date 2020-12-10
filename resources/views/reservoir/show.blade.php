@@ -28,7 +28,7 @@
                     <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $coordinate->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">Dzēst</button>
                     </form>
                 </td>
             </tr>
