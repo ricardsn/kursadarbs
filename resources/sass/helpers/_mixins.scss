@@ -1,0 +1,12 @@
+@mixin setDefaultHeader() {
+    background-size: cover;
+    height: 300px;
+    max-width: 1440px;
+    margin: auto;
+
+    #main-header {
+        padding: 65px 0;
+        color: white;
+        font-family: "Nunito", sans-serif;
+    }
+}

@@ -188,14 +188,18 @@ class ReservoirController extends Controller
         DB::table('coordinates')->where('reservoir_id', $id)->delete();
     }
 
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Reservoir  $reservoir
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Reservoir $reservoir)
+    public function destroy($id)
     {
-        //
+        $reservoir = Reservoir::find($id);
+        $reservoir->delete();
+        $this->removeDataBeforeUpdate($id);
+
+        return redirect()->route('show')
+            ->with('success','Challenge updated successfully');
     }
 }

@@ -6,7 +6,7 @@ define([
     './vendor/bootstrap-geocoder',
     './vendor/leaflet.geometryutil',
     'leaflet.markercluster'
-], function(
+], function (
     $,
     L,
     esri,
@@ -18,6 +18,7 @@ define([
     let markers = L.markerClusterGroup();
     const selector = $('#radius-selector');
     const typeSelector = $('#type');
+    const searchInput = $('#address-search');
     let radius = 0;
     let location = null;
     let searchButton = document.getElementById('searchButton');
@@ -48,7 +49,7 @@ define([
         url: '/reservoir/getCoordinates',
         dataFormat: 'json',
         success: function (data) {
-           coordinates = data;
+            coordinates = data;
         },
         error: function (err) {
             alert("Error : " + JSON.stringify(err));
@@ -75,7 +76,7 @@ define([
             reservoirs = data;
             $.each(reservoirs, function (index, reservoir) {
                 addStoreToMapLoad(reservoir);
-                if(reservoir.type === 'Ezers') {
+                if (reservoir.type === 'Ezers') {
                     lakes.push(reservoir);
                 } else if (reservoir.type === 'Upe') {
                     rivers.push(reservoir);
@@ -121,13 +122,14 @@ define([
 
     search.on('results', function (data) {
         location = data.latlng;
+        searchInput[0].value = data.text;
     });
 
     function getReservoirCoordinates(reservoir) {
         let reservoirCoordinates = [];
 
         $.each(coordinates, function (index, coordinate) {
-            if(coordinate.reservoir_id === reservoir.id) {
+            if (coordinate.reservoir_id === reservoir.id) {
                 reservoirCoordinates.push(coordinate);
             }
         });
@@ -135,7 +137,7 @@ define([
         return reservoirCoordinates;
     }
 
-    function getDistance(reservoir){ //formula from https://www.movable-type.co.uk/scripts/latlong.html
+    function getDistance(reservoir) { //formula from https://www.movable-type.co.uk/scripts/latlong.html
         //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
         const reservoirCoordinates = getReservoirCoordinates(reservoir);
         let closestCoordinateDistance = null;
@@ -149,22 +151,22 @@ define([
 
             const R = 6371e3;
 
-            const fi1 = lat1 * Math.PI/180;
-            const fi2 = lat2 * Math.PI/180;
-            const dFi = (lat2-lat1) * Math.PI/180;
-            const dLa = (lon2-lon1) * Math.PI/180;
+            const fi1 = lat1 * Math.PI / 180;
+            const fi2 = lat2 * Math.PI / 180;
+            const dFi = (lat2 - lat1) * Math.PI / 180;
+            const dLa = (lon2 - lon1) * Math.PI / 180;
 
-            const a = Math.sin(dFi/2) * Math.sin(dFi/2) +
+            const a = Math.sin(dFi / 2) * Math.sin(dFi / 2) +
                 Math.cos(fi1) * Math.cos(fi2) *
-                Math.sin(dLa/2) * Math.sin(dLa/2);
+                Math.sin(dLa / 2) * Math.sin(dLa / 2);
 
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
             const distance = R * c - parseFloat(coordinate['radius']);
-            if(closestCoordinateDistance === null) {
+            if (closestCoordinateDistance === null) {
                 closestCoordinateDistance = distance;
                 closestCoordinate = coordinate;
-            } else if(closestCoordinateDistance > distance) {
+            } else if (closestCoordinateDistance > distance) {
                 closestCoordinateDistance = distance;
                 closestCoordinate = coordinate;
             }
@@ -183,16 +185,17 @@ define([
         markers.clearLayers();
         let searchedReservoirs = [];
         let selection = typeSelector[0].options;
-
+        markers.addLayer(L.marker(location, {icon: customIcon}).bindPopup('Jūs atrodaties šeit'));
+        console.log(markers)
         if (selection[selection.selectedIndex].value === 'Ezers') {
-           searchedReservoirs = lakes;
+            searchedReservoirs = lakes;
         } else if (selection[selection.selectedIndex].value === 'Upe') {
             searchedReservoirs = rivers;
         }
 
         $.each(searchedReservoirs, function (index, reservoir) {
             const reservoirDist = getDistance(reservoir);
-            if( reservoirDist.distance <= radius * 1000) { //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
+            if (reservoirDist.distance <= radius * 1000) { //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
                 displayReservoirs.push(reservoir);
                 addStoreToMapSearch(reservoir, reservoirDist.coordinate);
             }

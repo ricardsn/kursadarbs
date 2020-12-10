@@ -8060,7 +8060,7 @@ module.exports = {
 /*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, contributors, dependencies, deprecated, description, devDependencies, files, homepage, jsnext:main, jspm, keywords, license, main, module, name, peerDependencies, repository, scripts, semistandard, unpkg, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_from\":\"esri-leaflet\",\"_id\":\"esri-leaflet@2.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-AW20oUuH4Co5qv+4rRtueHLczeqgYnJblv1KY1PLQgJrzeusT9ZgDXPi/esMeb3yN2PC2JL5BZIhlfzRegVDXA==\",\"_location\":\"/esri-leaflet\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"tag\",\"registry\":true,\"raw\":\"esri-leaflet\",\"name\":\"esri-leaflet\",\"escapedName\":\"esri-leaflet\",\"rawSpec\":\"\",\"saveSpec\":null,\"fetchSpec\":\"latest\"},\"_requiredBy\":[\"#USER\",\"/\"],\"_resolved\":\"https://registry.npmjs.org/esri-leaflet/-/esri-leaflet-2.5.1.tgz\",\"_shasum\":\"b473785d0459960a91934c4f8ea8e5512dd9145e\",\"_spec\":\"esri-leaflet\",\"_where\":\"C:\\\\wamp64\\\\www\\\\KursaDarbs_rn18011\\\\kursa-darbs\",\"author\":{\"name\":\"Patrick Arlt\",\"email\":\"parlt@esri.com\",\"url\":\"http://patrickarlt.com\"},\"bugs\":{\"url\":\"https://github.com/esri/esri-leaflet/issues\"},\"bundleDependencies\":false,\"contributors\":[{\"name\":\"Patrick Arlt\",\"email\":\"parlt@esri.com\",\"url\":\"http://patrickarlt.com\"},{\"name\":\"John Gravois\",\"email\":\"jgravois@esri.com\",\"url\":\"http://johngravois.com\"}],\"dependencies\":{\"@terraformer/arcgis\":\"^2.0.7\",\"tiny-binary-search\":\"^1.0.3\"},\"deprecated\":false,\"description\":\"Leaflet plugins for consuming ArcGIS Online and ArcGIS Server services.\",\"devDependencies\":{\"@rollup/plugin-json\":\"^4.0.3\",\"@rollup/plugin-node-resolve\":\"^7.1.3\",\"chai\":\"4.2.0\",\"gh-release\":\"^3.3.2\",\"highlight.js\":\"^9.12.0\",\"http-server\":\"^0.12.3\",\"husky\":\"^1.1.1\",\"istanbul\":\"^0.4.5\",\"karma\":\"^4.0.1\",\"karma-chai-sinon\":\"^0.1.5\",\"karma-chrome-launcher\":\"^2.2.0\",\"karma-coverage\":\"^1.1.2\",\"karma-mocha\":\"^1.3.0\",\"karma-mocha-reporter\":\"^2.2.5\",\"karma-sourcemap-loader\":\"^0.3.7\",\"leaflet\":\"^1.6.0\",\"mkdirp\":\"^0.5.1\",\"mocha\":\"^5.2.0\",\"npm-run-all\":\"^4.0.2\",\"rollup\":\"^2.0.0\",\"rollup-plugin-uglify\":\"^6.0.4\",\"semistandard\":\"^9.0.0\",\"sinon\":\"^6.3.5\",\"sinon-chai\":\"3.2.0\",\"snazzy\":\"^8.0.0\",\"uglify-js\":\"^2.8.29\",\"watch\":\"^1.0.2\"},\"files\":[\"src/**/*.js\",\"dist/esri-leaflet.js\",\"dist/esri-leaflet.js.map\",\"dist/esri-leaflet-debug.js.map\",\"profiles/*.js\"],\"homepage\":\"http://esri.github.io/esri-leaflet\",\"jsnext:main\":\"src/EsriLeaflet.js\",\"jspm\":{\"registry\":\"npm\",\"format\":\"es6\",\"main\":\"src/EsriLeaflet.js\"},\"keywords\":[\"arcgis\",\"esri\",\"esri leaflet\",\"gis\",\"leaflet plugin\",\"mapping\"],\"license\":\"Apache-2.0\",\"main\":\"dist/esri-leaflet-debug.js\",\"module\":\"src/EsriLeaflet.js\",\"name\":\"esri-leaflet\",\"peerDependencies\":{\"leaflet\":\"^1.0.0\"},\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/Esri/esri-leaflet.git\"},\"scripts\":{\"build\":\"rollup -c profiles/debug.js & rollup -c profiles/production.js\",\"fix\":\"semistandard --fix\",\"lint\":\"semistandard | snazzy\",\"prebuild\":\"mkdirp dist\",\"precommit\":\"npm run lint\",\"prepare\":\"npm run build\",\"pretest\":\"npm run build\",\"release\":\"./scripts/release.sh\",\"serve\":\"http-server -p 5000 -c-1 -o\",\"start\":\"run-p start-watch serve\",\"start-watch\":\"watch \\\"npm run build\\\" src\",\"test\":\"npm run lint && karma start\",\"test:ci\":\"npm run lint && karma start --browsers Chrome_travis_ci\"},\"semistandard\":{\"globals\":[\"expect\",\"L\",\"XMLHttpRequest\",\"sinon\",\"xhr\",\"proj4\"]},\"unpkg\":\"dist/esri-leaflet-debug.js\",\"version\":\"2.5.1\"}");
+module.exports = JSON.parse("{\"_from\":\"esri-leaflet@^2.5.1\",\"_id\":\"esri-leaflet@2.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-AW20oUuH4Co5qv+4rRtueHLczeqgYnJblv1KY1PLQgJrzeusT9ZgDXPi/esMeb3yN2PC2JL5BZIhlfzRegVDXA==\",\"_location\":\"/esri-leaflet\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"range\",\"registry\":true,\"raw\":\"esri-leaflet@^2.5.1\",\"name\":\"esri-leaflet\",\"escapedName\":\"esri-leaflet\",\"rawSpec\":\"^2.5.1\",\"saveSpec\":null,\"fetchSpec\":\"^2.5.1\"},\"_requiredBy\":[\"/\",\"/esri-leaflet-geocoder\"],\"_resolved\":\"https://registry.npmjs.org/esri-leaflet/-/esri-leaflet-2.5.1.tgz\",\"_shasum\":\"b473785d0459960a91934c4f8ea8e5512dd9145e\",\"_spec\":\"esri-leaflet@^2.5.1\",\"_where\":\"C:\\\\wamp64\\\\www\\\\KursaDarbs_rn18011\\\\kursa-darbs\",\"author\":{\"name\":\"Patrick Arlt\",\"email\":\"parlt@esri.com\",\"url\":\"http://patrickarlt.com\"},\"bugs\":{\"url\":\"https://github.com/esri/esri-leaflet/issues\"},\"bundleDependencies\":false,\"contributors\":[{\"name\":\"Patrick Arlt\",\"email\":\"parlt@esri.com\",\"url\":\"http://patrickarlt.com\"},{\"name\":\"John Gravois\",\"email\":\"jgravois@esri.com\",\"url\":\"http://johngravois.com\"}],\"dependencies\":{\"@terraformer/arcgis\":\"^2.0.7\",\"tiny-binary-search\":\"^1.0.3\"},\"deprecated\":false,\"description\":\"Leaflet plugins for consuming ArcGIS Online and ArcGIS Server services.\",\"devDependencies\":{\"@rollup/plugin-json\":\"^4.0.3\",\"@rollup/plugin-node-resolve\":\"^7.1.3\",\"chai\":\"4.2.0\",\"gh-release\":\"^3.3.2\",\"highlight.js\":\"^9.12.0\",\"http-server\":\"^0.12.3\",\"husky\":\"^1.1.1\",\"istanbul\":\"^0.4.5\",\"karma\":\"^4.0.1\",\"karma-chai-sinon\":\"^0.1.5\",\"karma-chrome-launcher\":\"^2.2.0\",\"karma-coverage\":\"^1.1.2\",\"karma-mocha\":\"^1.3.0\",\"karma-mocha-reporter\":\"^2.2.5\",\"karma-sourcemap-loader\":\"^0.3.7\",\"leaflet\":\"^1.6.0\",\"mkdirp\":\"^0.5.1\",\"mocha\":\"^5.2.0\",\"npm-run-all\":\"^4.0.2\",\"rollup\":\"^2.0.0\",\"rollup-plugin-uglify\":\"^6.0.4\",\"semistandard\":\"^9.0.0\",\"sinon\":\"^6.3.5\",\"sinon-chai\":\"3.2.0\",\"snazzy\":\"^8.0.0\",\"uglify-js\":\"^2.8.29\",\"watch\":\"^1.0.2\"},\"files\":[\"src/**/*.js\",\"dist/esri-leaflet.js\",\"dist/esri-leaflet.js.map\",\"dist/esri-leaflet-debug.js.map\",\"profiles/*.js\"],\"homepage\":\"http://esri.github.io/esri-leaflet\",\"jsnext:main\":\"src/EsriLeaflet.js\",\"jspm\":{\"registry\":\"npm\",\"format\":\"es6\",\"main\":\"src/EsriLeaflet.js\"},\"keywords\":[\"arcgis\",\"esri\",\"esri leaflet\",\"gis\",\"leaflet plugin\",\"mapping\"],\"license\":\"Apache-2.0\",\"main\":\"dist/esri-leaflet-debug.js\",\"module\":\"src/EsriLeaflet.js\",\"name\":\"esri-leaflet\",\"peerDependencies\":{\"leaflet\":\"^1.0.0\"},\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/Esri/esri-leaflet.git\"},\"scripts\":{\"build\":\"rollup -c profiles/debug.js & rollup -c profiles/production.js\",\"fix\":\"semistandard --fix\",\"lint\":\"semistandard | snazzy\",\"prebuild\":\"mkdirp dist\",\"precommit\":\"npm run lint\",\"prepare\":\"npm run build\",\"pretest\":\"npm run build\",\"release\":\"./scripts/release.sh\",\"serve\":\"http-server -p 5000 -c-1 -o\",\"start\":\"run-p start-watch serve\",\"start-watch\":\"watch \\\"npm run build\\\" src\",\"test\":\"npm run lint && karma start\",\"test:ci\":\"npm run lint && karma start --browsers Chrome_travis_ci\"},\"semistandard\":{\"globals\":[\"expect\",\"L\",\"XMLHttpRequest\",\"sinon\",\"xhr\",\"proj4\"]},\"unpkg\":\"dist/esri-leaflet-debug.js\",\"version\":\"2.5.1\"}");
 
 /***/ }),
 
@@ -60671,9 +60671,11 @@ module.exports = function(module) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! ./water-map */ "./resources/js/water-map.js");
-
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+__webpack_require__(/*! ./header/header */ "./resources/js/header/header.js");
+
+__webpack_require__(/*! ./water-map */ "./resources/js/water-map.js");
 
 __webpack_require__(/*! ./map/create-dropdown */ "./resources/js/map/create-dropdown.js");
 
@@ -60721,6 +60723,30 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/header/header.js":
+/*!***************************************!*\
+  !*** ./resources/js/header/header.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var header = document.getElementById('main-header');
+var url = window.location.pathname.split('/');
+var jumbotron = document.getElementsByClassName('jumbotron')[0];
+
+if (url[1] === '') {
+  header.innerText = 'Makšķerēšanas klubs';
+  jumbotron.classList.add('Pike');
+} else if (url[1] === 'reservoir') {
+  header.innerText = 'Karte';
+  jumbotron.classList.add('Zander');
+} else {
+  header.innerText = 'Default';
+  jumbotron.classList.add('Default');
+}
 
 /***/ }),
 
@@ -61213,11 +61239,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var mymap = L.map('mapid').setView([56.9496, 24.1052], 7);
   var markers = L.markerClusterGroup();
   var selector = $('#radius-selector');
+  var typeSelector = $('#type');
+  var searchInput = $('#address-search');
   var radius = 0;
   var location = null;
   var searchButton = document.getElementById('searchButton');
   var reservoirs = null;
   var displayReservoirs = [];
+  var coordinates = null;
+  var rivers = [];
+  var lakes = [];
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -61234,6 +61265,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     // point of the icon which will correspond to marker's location
     popupAnchor: [-3, -30] // point from which the popup should open relative to the iconAnchor
 
+  });
+  $.ajax({
+    url: '/reservoir/getCoordinates',
+    dataFormat: 'json',
+    success: function success(data) {
+      coordinates = data;
+    },
+    error: function error(err) {
+      alert("Error : " + JSON.stringify(err));
+    }
   });
   $.ajax({
     url: '/reservoir/show',
@@ -61254,7 +61295,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     success: function success(data) {
       reservoirs = data;
       $.each(reservoirs, function (index, reservoir) {
-        addStoreToMap(reservoir);
+        addStoreToMapLoad(reservoir);
+
+        if (reservoir.type === 'Ezers') {
+          lakes.push(reservoir);
+        } else if (reservoir.type === 'Upe') {
+          rivers.push(reservoir);
+        }
       });
       mymap.addLayer(markers);
     },
@@ -61263,7 +61310,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   });
 
-  function addStoreToMap(reservoir) {
+  function addStoreToMapSearch(reservoir, coordinate) {
+    var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] + reservoir['type']);
+    markers.addLayer(marker); // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
+  }
+
+  function addStoreToMapLoad(reservoir) {
     var marker = L.marker([reservoir['lat'], reservoir['long']], {
       icon: customIcon
     }).bindPopup(reservoir['name'] + reservoir['type']);
@@ -61289,27 +61341,77 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   });
   search.on('results', function (data) {
     location = data.latlng;
+    searchInput[0].value = data.text;
   });
 
-  function getDistance(lat1, lat2, lon1, lon2) {
+  function getReservoirCoordinates(reservoir) {
+    var reservoirCoordinates = [];
+    $.each(coordinates, function (index, coordinate) {
+      if (coordinate.reservoir_id === reservoir.id) {
+        reservoirCoordinates.push(coordinate);
+      }
+    });
+    return reservoirCoordinates;
+  }
+
+  function getDistance(reservoir) {
     //formula from https://www.movable-type.co.uk/scripts/latlong.html
-    var R = 6371e3;
-    var fi1 = lat1 * Math.PI / 180;
-    var fi2 = lat2 * Math.PI / 180;
-    var dFi = (lat2 - lat1) * Math.PI / 180;
-    var dLa = (lon2 - lon1) * Math.PI / 180;
-    var a = Math.sin(dFi / 2) * Math.sin(dFi / 2) + Math.cos(fi1) * Math.cos(fi2) * Math.sin(dLa / 2) * Math.sin(dLa / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+    //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
+    var reservoirCoordinates = getReservoirCoordinates(reservoir);
+    var closestCoordinateDistance = null;
+    var closestCoordinate = null;
+    $.each(reservoirCoordinates, function (index, coordinate) {
+      var lat1 = parseFloat(coordinate['lat']);
+      var lat2 = location.lat;
+      var lon1 = parseFloat(coordinate['long']);
+      var lon2 = location.lng;
+      var R = 6371e3;
+      var fi1 = lat1 * Math.PI / 180;
+      var fi2 = lat2 * Math.PI / 180;
+      var dFi = (lat2 - lat1) * Math.PI / 180;
+      var dLa = (lon2 - lon1) * Math.PI / 180;
+      var a = Math.sin(dFi / 2) * Math.sin(dFi / 2) + Math.cos(fi1) * Math.cos(fi2) * Math.sin(dLa / 2) * Math.sin(dLa / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      var distance = R * c - parseFloat(coordinate['radius']);
+
+      if (closestCoordinateDistance === null) {
+        closestCoordinateDistance = distance;
+        closestCoordinate = coordinate;
+      } else if (closestCoordinateDistance > distance) {
+        closestCoordinateDistance = distance;
+        closestCoordinate = coordinate;
+      }
+    });
+    var result = {
+      coordinate: closestCoordinate,
+      distance: closestCoordinateDistance
+    };
+    return result;
   }
 
   searchButton.onclick = function () {
     displayReservoirs = [];
     markers.clearLayers();
-    $.each(reservoirs, function (index, reservoir) {
-      if (getDistance(parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng) <= radius * 1000) {
+    var searchedReservoirs = [];
+    var selection = typeSelector[0].options;
+    markers.addLayer(L.marker(location, {
+      icon: customIcon
+    }).bindPopup('Jūs atrodaties šeit'));
+    console.log(markers);
+
+    if (selection[selection.selectedIndex].value === 'Ezers') {
+      searchedReservoirs = lakes;
+    } else if (selection[selection.selectedIndex].value === 'Upe') {
+      searchedReservoirs = rivers;
+    }
+
+    $.each(searchedReservoirs, function (index, reservoir) {
+      var reservoirDist = getDistance(reservoir);
+
+      if (reservoirDist.distance <= radius * 1000) {
+        //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
         displayReservoirs.push(reservoir);
-        addStoreToMap(reservoir);
+        addStoreToMapSearch(reservoir, reservoirDist.coordinate);
       }
     });
     mymap.addLayer(markers);
@@ -61318,16 +61420,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   function addAllReservoirsToMap() {
     markers.clearLayers();
     $.each(reservoirs, function (index, reservoir) {
-      addStoreToMap(reservoir);
+      addStoreToMapLoad(reservoir);
     });
     mymap.addLayer(markers);
-  } //     mymap.on('click', addMarker);
-  //     function addMarker(e){
-  // // Add marker to reservoir at click location; add popup window
-  //         var newMarker = new L.circle(e.latlng, 1000).addTo(mymap);
-  //         console.log(e.latlng)
-  //     }
-
+  }
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

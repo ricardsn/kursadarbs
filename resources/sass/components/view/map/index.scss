@@ -1,8 +1,67 @@
-#mapid {
-    height: 500px;
-    width: 1000px;
-    margin: auto;
+#index-map {
+    max-width: 1440px;
+
+    .row {
+        background: rgba(39, 39, 39, 0.8);
+
+        #mapid {
+            flex: 70%;
+            height: 500px;
+            width: 1000px;
+            margin: auto;
+        }
+
+        .search-content {
+            flex: 20%;
+            margin: auto 10px;
+
+            #searchButton {
+                margin-top: 20px;
+                width: 100%;
+            }
+
+            #radius-selector {
+                margin-left: 7px;
+            }
+
+            .type-select, #radius-selector {
+                margin-top: 10px;
+                height: 30px;
+            }
+
+            .input-group {
+                #address-search {
+                    width: 100%;
+                }
+
+                .dropdown-menu {
+                    width: 90%;
+                    margin-left: 17px;
+
+                    div {
+                        border: none;
+                        ul {
+                            margin: 0 2px;
+                            padding: 5px;
+
+                            li {
+                                list-style-type: none;
+                                border-bottom: 1px solid black;
+                                margin-top: 3px;
+
+                                &:hover {
+                                    background-color: #c5c5c6;
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
 
 #createmap {
     height: 500px;

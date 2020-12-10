@@ -11528,16 +11528,188 @@ a.text-dark:focus {
   }
 }
 
-#mapid {
+section.Pike {
+  background: url(/images/pike.jpg?8427149022b4f24a590158fcba01c761) no-repeat;
+  background-position-y: 45%;
+  background-size: cover;
+  height: 300px;
+  max-width: 1440px;
+  margin: auto;
+}
+
+section.Pike #main-header {
+  padding: 65px 0;
+  color: white;
+  font-family: "Nunito", sans-serif;
+}
+
+section.Zander {
+  background: url(/images/perch.jpg?b6a6a5d6a67e50f418584f2c8d2ce62c) no-repeat;
+  background-position-y: 55%;
+  background-size: cover;
+  height: 300px;
+  max-width: 1440px;
+  margin: auto;
+}
+
+section.Zander #main-header {
+  padding: 65px 0;
+  color: white;
+  font-family: "Nunito", sans-serif;
+}
+
+.outer-nav {
+  width: 100%;
+}
+
+.outer-nav .navbar {
+  max-width: 1440px;
+  margin: auto;
+  padding: 10px 0;
+  background-color: transparent !important;
+}
+
+#index-map {
+  max-width: 1440px;
+}
+
+#index-map .row {
+  background: rgba(39, 39, 39, 0.8);
+}
+
+#index-map .row #mapid {
+  flex: 70%;
   height: 500px;
   width: 1000px;
   margin: auto;
+}
+
+#index-map .row .search-content {
+  flex: 20%;
+  margin: auto 10px;
+}
+
+#index-map .row .search-content #searchButton {
+  margin-top: 20px;
+  width: 100%;
+}
+
+#index-map .row .search-content #radius-selector {
+  margin-left: 7px;
+}
+
+#index-map .row .search-content .type-select,
+#index-map .row .search-content #radius-selector {
+  margin-top: 10px;
+  height: 30px;
+}
+
+#index-map .row .search-content .input-group #address-search {
+  width: 100%;
+}
+
+#index-map .row .search-content .input-group .dropdown-menu {
+  width: 90%;
+  margin-left: 17px;
+}
+
+#index-map .row .search-content .input-group .dropdown-menu div {
+  border: none;
+}
+
+#index-map .row .search-content .input-group .dropdown-menu div ul {
+  margin: 0 2px;
+  padding: 5px;
+}
+
+#index-map .row .search-content .input-group .dropdown-menu div ul li {
+  list-style-type: none;
+  border-bottom: 1px solid black;
+  margin-top: 3px;
+}
+
+#index-map .row .search-content .input-group .dropdown-menu div ul li:hover {
+  background-color: #c5c5c6;
+  cursor: pointer;
 }
 
 #createmap {
   height: 500px;
   width: 1000px;
   margin: auto;
+}
+
+.table {
+  background-color: #95c5ed;
+  max-width: 1440px;
+  margin: auto;
+}
+
+.table thead th {
+  background-color: #2583a7;
+}
+
+#homepage.container {
+  max-width: 1440px;
+  padding: 0;
+}
+
+@media (min-width: 1025px) {
+  #homepage.container {
+    margin: 100px auto;
+  }
+}
+
+#homepage.container .row {
+  background: rgba(39, 39, 39, 0.8);
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+  margin: auto;
+}
+
+#homepage.container .row-title {
+  text-align: center;
+  width: 100%;
+}
+
+@media (min-width: 1025px) {
+  #homepage.container .row-title {
+    margin-bottom: 30px;
+  }
+}
+
+#homepage.container .row-content {
+  text-align: justify;
+  max-width: 800px;
+  margin: auto;
+}
+
+footer {
+  position: absolute;
+  width: 100%;
+}
+
+body {
+  background: url(/images/Usma_2.jpg?1fc256d42f86ad2d617a944f2df0c574) fixed no-repeat;
+  background-size: cover;
+}
+
+.form-container {
+  max-width: 1440px;
+  margin: auto;
+  background: rgba(39, 39, 39, 0.8);
+  border-radius: 5px;
+  padding: 20px;
+  color: white;
+}
+
+.form-container h3 {
+  text-align: center;
+}
+
+.form-container button {
+  width: 100%;
 }
 
 .leaflet-cluster-anim .leaflet-marker-icon,

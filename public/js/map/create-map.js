@@ -25107,7 +25107,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       error: function error(jqXHR, textStatus, errorThrown) {
         console.log(JSON.stringify(jqXHR));
         console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-        alert('look');
+        alert('Error occured look into console logs');
       }
     });
   };
