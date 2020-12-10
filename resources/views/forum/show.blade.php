@@ -15,7 +15,14 @@
                     </div>
                 </div>
             </div>
-            <div id="comments" class="container"/>
+            <div class="comment-textarea">
+                @csrf
+                <textarea name="comment-block" id="comment-block" cols="30" rows="10" class="form-control"></textarea>
+                <button id="publish-comment" class="btn-success btn">Publicēt</button>
+            </div>
+            <div id="comments" class="container"></div>
+            <div class="prev">Atpakaļ</div>
+            <div class="next">Uzpriekšu</div>
         </div>
     </div>
     <script src="{{ asset('js/forum/comments.js')  }}"></script>

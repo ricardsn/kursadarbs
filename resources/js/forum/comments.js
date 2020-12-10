@@ -8,28 +8,67 @@ define([
     const commentField = document.getElementById('comments');
     let users = [];
     let comments = [];
+    const saveButton = document.getElementById("publish-comment");
+    let pages = 0;
+    let page = 0;
 
-    $.ajax({
-        url: `${url}/getComments`,
-        dataFormat: 'json',
-        success: function (data) {
-           users = data.user_data;
-           comments = data.comments;
-           if(comments) {
-               comments.forEach(comment => {
-                   commentField.insertAdjacentHTML('beforeend', insertComment(comment));
-               });
-           } else {
-               commentField.insertAdjacentHTML('beforeend', '<div>Komentāru nav... :(</div>')
-           }
-        },
-        error: function (err) {
-            alert("Error : " + JSON.stringify(err));
-        }
-    });
+    function loadComments() {
+        $.ajax({
+            url: `${url}/getComments`,
+            dataFormat: 'json',
+            success: function (data) {
+                users = data.user_data;
+                comments = data.comments;
+                comments.sort(function (first,second) {
+                    return new Date(second.created_at) - new Date(first.created_at);
+                });
+                commentField.innerText = '';
+                if(comments.length > 0) {
+                    comments.forEach(comment => {
+                        commentField.appendChild(insertComment(comment))
+                    });
+                    divideIntoPages();
+                } else {
+                    //commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
+                }
+            },
+            error: function (err) {
+                alert("Error : " + JSON.stringify(err));
+            }
+        });
+    }
+
+    loadComments();
+
+    saveButton.onclick = () => {
+        const commentData = $('#comment-block').val();
+        const id = window.location.pathname.replace('/forum/','');
+
+        $.ajax({
+            method: "POST",
+            url: "/comment/store",
+            dataType: 'html',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                commentData: commentData,
+                reservoirId: id
+            },
+            success: function() {
+                loadComments();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                alert('Error occured look into console logs')
+            }
+        });
+    };
 
     function insertComment(commentData) {
-        const element = ' <div class="card card-white post">\n' +
+        const div = document.createElement('div');
+        div.innerHTML = ' <div class="card card-white post">\n' +
             '                <div class="post-heading">\n' +
             '                    <div class="float-left meta">\n' +
             '                        <div class="title h5">\n' +
@@ -45,7 +84,7 @@ define([
             '                </div>\n' +
             '            </div>';
 
-        return element;
+        return div;
     }
 
     function getUserName(userId) {
@@ -59,4 +98,33 @@ define([
 
         return returnResult;
     }
+
+    function divideIntoPages() {
+        const childNodes = $('#comments').children().length;
+        const maxCommentsPerPage = 10;
+        let comments = 0;
+        pages = Math.ceil(childNodes / maxCommentsPerPage)
+
+        for (let i=0; i < pages; i++) {
+            if (i === 0) {
+                $('#comments > div').slice(comments, comments+maxCommentsPerPage).addClass(`page${i}`).show();
+            } else {
+                $('#comments > div').slice(comments, comments+maxCommentsPerPage).addClass(`page${i}`).hide();
+            }
+            comments += maxCommentsPerPage;
+        }
+    }
+
+    $('.next').on('click',function(){
+        if(page < pages - 1) {
+            $("#comments > div:visible").hide();
+            $('.page' + ++page).show();
+        }
+    })
+    $('.prev').on('click',function(){
+        if(page > 0) {
+            $("#comments > div:visible").hide();
+            $('.page' + --page).show();
+        }
+    })
 });

@@ -11712,6 +11712,27 @@ body {
   width: 100%;
 }
 
+.prev,
+.next {
+  height: 100px;
+  width: 100px;
+  background-color: red;
+}
+
+.comment-textarea {
+  width: 400px;
+  margin: auto;
+  height: 200px;
+}
+
+.comment-textarea #comment-block {
+  height: 100px;
+}
+
+.comment-textarea .btn {
+  margin-left: 80%;
+}
+
 .leaflet-cluster-anim .leaflet-marker-icon,
 .leaflet-cluster-anim .leaflet-marker-shadow {
   transition: transform 0.3s ease-out, opacity 0.3s ease-in;

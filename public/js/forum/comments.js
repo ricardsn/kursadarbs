@@ -10984,29 +10984,67 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var commentField = document.getElementById('comments');
   var users = [];
   var comments = [];
-  $.ajax({
-    url: "".concat(url, "/getComments"),
-    dataFormat: 'json',
-    success: function success(data) {
-      users = data.user_data;
-      comments = data.comments;
+  var saveButton = document.getElementById("publish-comment");
+  var pages = 0;
+  var page = 0;
 
-      if (comments) {
-        comments.forEach(function (comment) {
-          commentField.insertAdjacentHTML('beforeend', insertComment(comment));
+  function loadComments() {
+    $.ajax({
+      url: "".concat(url, "/getComments"),
+      dataFormat: 'json',
+      success: function success(data) {
+        users = data.user_data;
+        comments = data.comments;
+        comments.sort(function (first, second) {
+          return new Date(second.created_at) - new Date(first.created_at);
         });
-      } else {
-        commentField.insertAdjacentHTML('beforeend', '<div>Komentāru nav... :(</div>');
+        commentField.innerText = '';
+
+        if (comments.length > 0) {
+          comments.forEach(function (comment) {
+            commentField.appendChild(insertComment(comment));
+          });
+          divideIntoPages();
+        } else {//commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
+        }
+      },
+      error: function error(err) {
+        alert("Error : " + JSON.stringify(err));
       }
-    },
-    error: function error(err) {
-      alert("Error : " + JSON.stringify(err));
-    }
-  });
+    });
+  }
+
+  loadComments();
+
+  saveButton.onclick = function () {
+    var commentData = $('#comment-block').val();
+    var id = window.location.pathname.replace('/forum/', '');
+    $.ajax({
+      method: "POST",
+      url: "/comment/store",
+      dataType: 'html',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        commentData: commentData,
+        reservoirId: id
+      },
+      success: function success() {
+        loadComments();
+      },
+      error: function error(jqXHR, textStatus, errorThrown) {
+        console.log(JSON.stringify(jqXHR));
+        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        alert('Error occured look into console logs');
+      }
+    });
+  };
 
   function insertComment(commentData) {
-    var element = ' <div class="card card-white post">\n' + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + commentData.created_at + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
-    return element;
+    var div = document.createElement('div');
+    div.innerHTML = ' <div class="card card-white post">\n' + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + commentData.created_at + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
+    return div;
   }
 
   function getUserName(userId) {
@@ -11018,6 +11056,36 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     });
     return returnResult;
   }
+
+  function divideIntoPages() {
+    var childNodes = $('#comments').children().length;
+    var maxCommentsPerPage = 10;
+    var comments = 0;
+    pages = Math.ceil(childNodes / maxCommentsPerPage);
+
+    for (var i = 0; i < pages; i++) {
+      if (i === 0) {
+        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i)).show();
+      } else {
+        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i)).hide();
+      }
+
+      comments += maxCommentsPerPage;
+    }
+  }
+
+  $('.next').on('click', function () {
+    if (page < pages - 1) {
+      $("#comments > div:visible").hide();
+      $('.page' + ++page).show();
+    }
+  });
+  $('.prev').on('click', function () {
+    if (page > 0) {
+      $("#comments > div:visible").hide();
+      $('.page' + --page).show();
+    }
+  });
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
