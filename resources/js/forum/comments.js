@@ -11,8 +11,9 @@ define([
     const saveButton = document.getElementById("publish-comment");
     let pages = 0;
     let page = 0;
+    const commentActionUrl = window.location.origin;
 
-    function loadComments() {
+    function loadComments(page = null) {
         $.ajax({
             url: `${url}/getComments`,
             dataFormat: 'json',
@@ -28,6 +29,11 @@ define([
                         commentField.appendChild(insertComment(comment))
                     });
                     divideIntoPages();
+                    addEditFuncOption();
+                    addDeleteFuncOption();
+                    if (page) {
+                        saveCommentPage(page)
+                    }
                 } else {
                     //commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
                 }
@@ -66,9 +72,116 @@ define([
         });
     };
 
+    function updateComment() {
+        const commentId = (this.id).replace('button-', '');
+        const commentData = $('#comment-edit-data'+commentId).val();
+        const commentBlock = this.parentNode.parentNode.parentNode.classList[0];
+
+        $.ajax({
+            method: "PATCH",
+            url: `/comment/${commentId}`,
+            dataType: 'html',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                commentData: commentData
+            },
+            success: function() {
+                loadComments(commentBlock);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                alert('Error occured look into console logs')
+            }
+        });
+    }
+
+    function saveCommentPage(commentClass) {
+        const comments = $('#comments').children();
+
+        comments.each(function (i, comment) {
+            if (comment.classList.contains(commentClass)) {
+                $(`.${ comment.classList[0] }`).show();
+            } else {
+                $(`.${ comment.classList[0] }`).hide();
+            }
+        });
+    }
+
+    function onClickEditComment() {
+        const commentId = this.id;
+        const commentBlock = this.parentNode.parentNode.parentNode;
+        const editCommentBlock = document.createElement('div');
+        const textarea = document.createElement('textarea');
+        const button = document.createElement('button');
+        if (!document.getElementById('button-'+commentId)) {
+            textarea.name = 'comment-edit-data'+commentId;
+            textarea.id = 'comment-edit-data'+commentId;
+            textarea.innerText = commentBlock.children[2].getElementsByTagName('p')[0].innerText;
+            button.id = 'button-'+commentId;
+            button.onclick = updateComment;
+            button.classList.add('btn');
+            button.classList.add('btn-success');
+            button.innerText = 'Rediģēt';
+            editCommentBlock.appendChild(textarea);
+            editCommentBlock.appendChild(button);
+            commentBlock.appendChild(editCommentBlock);
+        }
+    }
+
+    function onClickDeleteComment() {
+        let commentId = (this.id).replace('delete', '');
+
+        $.ajax({
+            method: "DELETE",
+            url: `/comment/${commentId}`,
+            dataType: 'html',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function() {
+                loadComments();
+                alert('Komentārs tika izdzēsts!')
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                alert('Error occured look into console logs')
+            }
+        });
+    }
+
+    function addDeleteFuncOption() {
+        let comments = commentField.getElementsByClassName('delete');
+        for (let i = 0; i < comments.length; i++) {
+            let comment = comments[i];
+            comment.onclick = onClickDeleteComment;
+        }
+    }
+
+    function addEditFuncOption() {
+        let comments = commentField.getElementsByClassName('edit');
+
+        for (let i = 0; i < comments.length; i++) {
+            let comment = comments[i];
+            comment.onclick = onClickEditComment;
+        }
+    }
+
     function insertComment(commentData) {
         const div = document.createElement('div');
-        div.innerHTML = ' <div class="card card-white post">\n' +
+        const options = '<div class="nav-item dropdown">\n' +
+            '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+            '                    </div>\n' +
+            '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n'+
+            '                        <a class="dropdown-item edit" id="'+ commentData.id +'">Rediģēt</a>\n' +
+            '                        <a class="dropdown-item delete" id="delete'+ commentData.id +'">Dzēst</a>\n' +
+            '                    </div>\n' +
+            '                </div>';
+
+        div.innerHTML = ' <div class="card card-white post">\n' + options +
             '                <div class="post-heading">\n' +
             '                    <div class="float-left meta">\n' +
             '                        <div class="title h5">\n' +
@@ -83,7 +196,6 @@ define([
             '\n' +
             '                </div>\n' +
             '            </div>';
-
         return div;
     }
 
@@ -120,11 +232,12 @@ define([
             $("#comments > div:visible").hide();
             $('.page' + ++page).show();
         }
-    })
+    });
+
     $('.prev').on('click',function(){
         if(page > 0) {
             $("#comments > div:visible").hide();
             $('.page' + --page).show();
         }
-    })
+    });
 });

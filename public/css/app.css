@@ -11722,7 +11722,6 @@ body {
 .comment-textarea {
   width: 400px;
   margin: auto;
-  height: 200px;
 }
 
 .comment-textarea #comment-block {
@@ -11731,6 +11730,24 @@ body {
 
 .comment-textarea .btn {
   margin-left: 80%;
+}
+
+#comments .comment-dropdown:before {
+  content: "\2807";
+  font-size: 3em;
+  color: #fa0000;
+}
+
+#comments .comment-dropdown:after {
+  display: none;
+}
+
+#comments .comment-dropdown a {
+  display: none;
+}
+
+#comments .comment-dropdown.is_visible a {
+  display: block;
 }
 
 .leaflet-cluster-anim .leaflet-marker-icon,

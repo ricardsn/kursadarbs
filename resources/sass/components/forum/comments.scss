@@ -1,7 +1,7 @@
 .comment-textarea {
     width: 400px;
     margin: auto;
-    height: 200px;
+
 
     #comment-block {
         height: 100px;
@@ -9,5 +9,29 @@
 
     .btn {
         margin-left: 80%;
+    }
+}
+
+#comments {
+    .comment-dropdown {
+        &:before {
+            content: '\2807';
+            font-size: 3em;
+            color: #fa0000;
+        }
+
+        &:after {
+            display: none;
+        }
+
+        a {
+            display: none;
+        }
+
+        &.is_visible {
+            a {
+                display: block;
+            }
+        }
     }
 }

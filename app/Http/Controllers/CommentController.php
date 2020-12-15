@@ -81,7 +81,8 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        $comment->content = $request->commentData;
+        $comment->update();
     }
 
     /**
@@ -92,6 +93,6 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $comment->delete();
     }
 }

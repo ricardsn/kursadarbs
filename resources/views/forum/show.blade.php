@@ -22,7 +22,7 @@
             </div>
             <div id="comments" class="container"></div>
             <div class="prev">Atpakaļ</div>
-            <div class="next">Uzpriekšu</div>
+            <div class="next">Uz priekšu</div>
         </div>
     </div>
     <script src="{{ asset('js/forum/comments.js')  }}"></script>

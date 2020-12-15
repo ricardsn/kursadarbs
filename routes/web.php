@@ -26,9 +26,6 @@ Route::get('/reservoir/showCoordinates', [ReservoirController::class, 'showCoord
 Route::get('/reservoir/{reservoirId}/getCoordinateEdit', [ReservoirController::class, 'getCoordinateEdit']);
 Route::get('/forum/{forumId}/getComments', [ForumController::class, 'getComments']);
 Route::any('/forum/{forumId}/update', [ForumController::class, 'update'])->name('updateForum');
-//Route::any('/comment/store', [CommentController::class, 'store'])->name('saveComment');
-
-//Route::post('reservoir/getCoordinates','App\Http\Controllers\ReservoirController@getCoordinates')->name('getCoordinates');
 
 Route::resource('reservoir', 'App\Http\Controllers\ReservoirController');
 Route::resource('forum', 'App\Http\Controllers\ForumController');
