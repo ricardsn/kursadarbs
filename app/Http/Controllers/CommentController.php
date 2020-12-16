@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Forum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -35,7 +37,17 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $forumId = Forum::where('reservoir_id', $request->reservoirId)->get()->first()->id;
+        $userId = Auth::user()->getAuthIdentifier();
+        $commentData = $request->commentData;
+
+        $comment = [
+            'content' => $commentData,
+            'forum_id' => $forumId,
+            'user_id' => $userId
+        ];
+
+        Comment::create($comment)->save();
     }
 
     /**
@@ -69,7 +81,8 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        $comment->content = $request->commentData;
+        $comment->update();
     }
 
     /**
@@ -80,6 +93,6 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $comment->delete();
     }
 }

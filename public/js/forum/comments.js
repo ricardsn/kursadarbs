@@ -10984,29 +10984,181 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var commentField = document.getElementById('comments');
   var users = [];
   var comments = [];
-  $.ajax({
-    url: "".concat(url, "/getComments"),
-    dataFormat: 'json',
-    success: function success(data) {
-      users = data.user_data;
-      comments = data.comments;
+  var saveButton = document.getElementById("publish-comment");
+  var pages = 0;
+  var page = 0;
+  var commentActionUrl = window.location.origin;
+  var pageCount = document.createElement('div');
+  var pageCounter = document.getElementById('pageCount');
+  pageCount.innerText = page + 1;
+  pageCounter.appendChild(pageCount);
 
-      if (comments) {
-        comments.forEach(function (comment) {
-          commentField.insertAdjacentHTML('beforeend', insertComment(comment));
+  function loadComments() {
+    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    $.ajax({
+      url: "".concat(url, "/getComments"),
+      dataFormat: 'json',
+      success: function success(data) {
+        users = data.user_data;
+        comments = data.comments;
+        comments.sort(function (first, second) {
+          return new Date(second.created_at) - new Date(first.created_at);
         });
-      } else {
-        commentField.insertAdjacentHTML('beforeend', '<div>Komentāru nav... :(</div>');
+        commentField.innerText = '';
+
+        if (comments.length > 0) {
+          comments.forEach(function (comment) {
+            commentField.appendChild(insertComment(comment));
+          });
+          divideIntoPages();
+          addEditFuncOption();
+          addDeleteFuncOption();
+
+          if (page) {
+            saveCommentPage(page);
+          }
+        } else {
+          commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>');
+        }
+      },
+      error: function error(err) {
+        alert("Error : " + JSON.stringify(err));
       }
-    },
-    error: function error(err) {
-      alert("Error : " + JSON.stringify(err));
+    });
+  }
+
+  loadComments();
+
+  saveButton.onclick = function () {
+    var commentData = $('#comment-block').val();
+    var id = window.location.pathname.replace('/forum/', '');
+    $.ajax({
+      method: "POST",
+      url: "/comment/store",
+      dataType: 'html',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        commentData: commentData,
+        reservoirId: id
+      },
+      success: function success() {
+        loadComments();
+        page = 0;
+        pageCount.innerText = page + 1;
+      },
+      error: function error(jqXHR, textStatus, errorThrown) {
+        console.log(JSON.stringify(jqXHR));
+        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        alert('Error occured look into console logs');
+      }
+    });
+  };
+
+  function updateComment() {
+    var commentId = this.id.replace('button-', '');
+    var commentData = $('#comment-edit-data' + commentId).val();
+    var commentBlock = this.parentNode.parentNode.parentNode.classList[0];
+    $.ajax({
+      method: "PATCH",
+      url: "/comment/".concat(commentId),
+      dataType: 'html',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        commentData: commentData
+      },
+      success: function success() {
+        loadComments(commentBlock);
+      },
+      error: function error(jqXHR, textStatus, errorThrown) {
+        console.log(JSON.stringify(jqXHR));
+        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        alert('Error occured look into console logs');
+      }
+    });
+  }
+
+  function saveCommentPage(commentClass) {
+    var comments = $('#comments').children();
+    comments.each(function (i, comment) {
+      if (comment.classList.contains(commentClass)) {
+        $(".".concat(comment.classList[0])).show();
+      } else {
+        $(".".concat(comment.classList[0])).hide();
+      }
+    });
+  }
+
+  function onClickEditComment() {
+    var commentId = this.id;
+    var commentBlock = this.parentNode.parentNode.parentNode;
+    var editCommentBlock = document.createElement('div');
+    var textarea = document.createElement('textarea');
+    var button = document.createElement('button');
+
+    if (!document.getElementById('button-' + commentId)) {
+      textarea.name = 'comment-edit-data' + commentId;
+      textarea.id = 'comment-edit-data' + commentId;
+      textarea.innerText = commentBlock.children[2].getElementsByTagName('p')[0].innerText;
+      button.id = 'button-' + commentId;
+      button.onclick = updateComment;
+      button.classList.add('btn');
+      button.classList.add('btn-success');
+      button.innerText = 'Rediģēt';
+      editCommentBlock.classList.add('comment-edit');
+      editCommentBlock.appendChild(textarea);
+      editCommentBlock.appendChild(button);
+      commentBlock.appendChild(editCommentBlock);
     }
-  });
+  }
+
+  function onClickDeleteComment() {
+    var commentId = this.id.replace('delete', '');
+    $.ajax({
+      method: "DELETE",
+      url: "/comment/".concat(commentId),
+      dataType: 'html',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function success() {
+        loadComments();
+        alert('Komentārs tika izdzēsts!');
+      },
+      error: function error(jqXHR, textStatus, errorThrown) {
+        console.log(JSON.stringify(jqXHR));
+        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        alert('Error occured look into console logs');
+      }
+    });
+  }
+
+  function addDeleteFuncOption() {
+    var comments = commentField.getElementsByClassName('delete');
+
+    for (var i = 0; i < comments.length; i++) {
+      var comment = comments[i];
+      comment.onclick = onClickDeleteComment;
+    }
+  }
+
+  function addEditFuncOption() {
+    var comments = commentField.getElementsByClassName('edit');
+
+    for (var i = 0; i < comments.length; i++) {
+      var comment = comments[i];
+      comment.onclick = onClickEditComment;
+    }
+  }
 
   function insertComment(commentData) {
-    var element = ' <div class="card card-white post">\n' + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + commentData.created_at + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
-    return element;
+    var div = document.createElement('div');
+    var options = '<div class="nav-item dropdown">\n' + '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' + '                    </div>\n' + '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n' + '                        <a class="dropdown-item edit" id="' + commentData.id + '">Rediģēt</a>\n' + '                        <a class="dropdown-item delete" id="delete' + commentData.id + '">Dzēst</a>\n' + '                    </div>\n' + '                </div>';
+    div.innerHTML = ' <div class="card card-white post">\n' + options + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + new Date(commentData.created_at).toISOString().replace(/T/, ' ').replace(/\..+/, '') + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
+    return div;
   }
 
   function getUserName(userId) {
@@ -11018,6 +11170,45 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     });
     return returnResult;
   }
+
+  function divideIntoPages() {
+    var childNodes = $('#comments').children().length;
+    var maxCommentsPerPage = 10;
+    var comments = 0;
+    pages = Math.ceil(childNodes / maxCommentsPerPage);
+
+    for (var i = 0; i < pages; i++) {
+      if (i === 0) {
+        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i, " comment")).show();
+      } else {
+        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i, " comment")).hide();
+      }
+
+      comments += maxCommentsPerPage;
+    }
+  }
+
+  $('.next').on('click', function () {
+    if (page < pages - 1) {
+      $("#comments > div:visible").hide();
+      $('.page' + ++page).show();
+      $("html, body").animate({
+        scrollTop: "500"
+      });
+    }
+  });
+  $('.forum-arrows').on('click', function () {
+    pageCount.innerText = page + 1;
+  });
+  $('.prev').on('click', function () {
+    if (page > 0) {
+      $("#comments > div:visible").hide();
+      $('.page' + --page).show();
+      $("html, body").animate({
+        scrollTop: "500"
+      });
+    }
+  });
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

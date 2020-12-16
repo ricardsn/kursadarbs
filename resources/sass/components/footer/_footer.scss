@@ -1,4 +1,24 @@
 footer {
     position: absolute;
     width: 100%;
+    background: rgba(39, 39, 39, 0.8);
+    margin-top: 20px;
+
+    .hook {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        display: none;
+
+        &-img {
+            height: 80px;
+            width: 80px;
+            background: url("../../helpers/icons/fishing.svg");
+            display: block;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
 }

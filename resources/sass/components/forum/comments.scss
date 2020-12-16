@@ -1,0 +1,98 @@
+.comment-textarea {
+    width: 400px;
+    margin: 0 auto 20px;
+    padding: 20px;
+    background-color: #f8fafc;
+    border-radius: 5px;
+
+    #comment-block {
+        height: 100px;
+    }
+
+    .btn {
+        margin-left: 80%;
+    }
+}
+
+#comments {
+    max-width: 80%;
+    margin: auto;
+
+    .comment {
+        margin: 20px 0;
+
+        .dropdown-item {
+            &:hover {
+                background-color: #c6c6c6;
+                cursor: pointer;
+            }
+        }
+
+        &-edit {
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+            display: grid;
+
+            textarea {
+                grid-row: 1;
+                width: 100%;
+                height: 100px;
+                margin-bottom: 10px;
+            }
+
+            button {
+                grid-row: 2;
+                width: 200px;
+                margin: 0 auto 10px;
+            }
+        }
+
+        .time {
+            position: absolute;
+            bottom: 0;
+            right: 10px;
+        }
+    }
+
+    .post {
+        &-heading, &-description {
+            width: 80%;
+            padding: 0 20px;
+        }
+
+        &-heading {
+            padding-top: 20px;
+        }
+
+        &-description {
+            padding-bottom: 20px;
+        }
+    }
+
+    .comment-dropdown {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        &:before {
+            content: '\2807 \1F41F';
+            font-size: 3em;
+            color: #000000;
+        }
+
+        &:after {
+            display: none;
+        }
+
+        a {
+            display: none;
+        }
+
+        &.is_visible {
+            a {
+                display: block;
+            }
+        }
+    }
+}

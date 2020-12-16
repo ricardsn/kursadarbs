@@ -60673,6 +60673,8 @@ module.exports = function(module) {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
+__webpack_require__(/*! ./footer/hook */ "./resources/js/footer/hook.js");
+
 __webpack_require__(/*! ./header/header */ "./resources/js/header/header.js");
 
 __webpack_require__(/*! ./water-map */ "./resources/js/water-map.js");
@@ -60723,6 +60725,32 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/footer/hook.js":
+/*!*************************************!*\
+  !*** ./resources/js/footer/hook.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function ($) {
+  window.onscroll = function () {
+    if (window.scrollY > 500) {
+      $('.hook').show("fast");
+    } else {
+      $('.hook').hide("fast");
+    }
+  };
+
+  $('.hook').on('click', function () {
+    $("html, body").animate({
+      scrollTop: "0"
+    });
+  });
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
 
