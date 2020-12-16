@@ -1,9 +1,9 @@
 <footer class="text-muted">
     <div class="container">
-        <p class="float-right">
-            <a href="#">Back to top</a>
+        <p class="float-right hook">
+            <span class="hook-img"></span>
         </p>
-        <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
-        <p>New to Bootstrap? <a href="../../..">Visit the homepage</a> or read our <a href="../../getting-started/">getting started guide</a>.</p>
+        <p>Makšķerēšanas klubs. Kursa darbs</p>
+        <p>Autors: Latvijas Universitātes, Datorikas fakultātes students - Ričards Ņedosvitnijs</p>
     </div>
 </footer>

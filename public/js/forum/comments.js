@@ -10988,6 +10988,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var pages = 0;
   var page = 0;
   var commentActionUrl = window.location.origin;
+  var pageCount = document.createElement('div');
+  var pageCounter = document.getElementById('pageCount');
+  pageCount.innerText = page + 1;
+  pageCounter.appendChild(pageCount);
 
   function loadComments() {
     var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -11013,7 +11017,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
           if (page) {
             saveCommentPage(page);
           }
-        } else {//commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
+        } else {
+          commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>');
         }
       },
       error: function error(err) {
@@ -11040,6 +11045,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       },
       success: function success() {
         loadComments();
+        page = 0;
+        pageCount.innerText = page + 1;
       },
       error: function error(jqXHR, textStatus, errorThrown) {
         console.log(JSON.stringify(jqXHR));
@@ -11101,6 +11108,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       button.classList.add('btn');
       button.classList.add('btn-success');
       button.innerText = 'Rediģēt';
+      editCommentBlock.classList.add('comment-edit');
       editCommentBlock.appendChild(textarea);
       editCommentBlock.appendChild(button);
       commentBlock.appendChild(editCommentBlock);
@@ -11149,7 +11157,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   function insertComment(commentData) {
     var div = document.createElement('div');
     var options = '<div class="nav-item dropdown">\n' + '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' + '                    </div>\n' + '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n' + '                        <a class="dropdown-item edit" id="' + commentData.id + '">Rediģēt</a>\n' + '                        <a class="dropdown-item delete" id="delete' + commentData.id + '">Dzēst</a>\n' + '                    </div>\n' + '                </div>';
-    div.innerHTML = ' <div class="card card-white post">\n' + options + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + commentData.created_at + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
+    div.innerHTML = ' <div class="card card-white post">\n' + options + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + new Date(commentData.created_at).toISOString().replace(/T/, ' ').replace(/\..+/, '') + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
     return div;
   }
 
@@ -11171,9 +11179,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     for (var i = 0; i < pages; i++) {
       if (i === 0) {
-        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i)).show();
+        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i, " comment")).show();
       } else {
-        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i)).hide();
+        $('#comments > div').slice(comments, comments + maxCommentsPerPage).addClass("page".concat(i, " comment")).hide();
       }
 
       comments += maxCommentsPerPage;
@@ -11184,12 +11192,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     if (page < pages - 1) {
       $("#comments > div:visible").hide();
       $('.page' + ++page).show();
+      $("html, body").animate({
+        scrollTop: "500"
+      });
     }
+  });
+  $('.forum-arrows').on('click', function () {
+    pageCount.innerText = page + 1;
   });
   $('.prev').on('click', function () {
     if (page > 0) {
       $("#comments > div:visible").hide();
       $('.page' + --page).show();
+      $("html, body").animate({
+        scrollTop: "500"
+      });
     }
   });
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),

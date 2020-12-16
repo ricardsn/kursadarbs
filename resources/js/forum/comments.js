@@ -12,7 +12,10 @@ define([
     let pages = 0;
     let page = 0;
     const commentActionUrl = window.location.origin;
-
+    let pageCount = document.createElement('div');
+    const pageCounter = document.getElementById('pageCount');
+    pageCount.innerText = page + 1;
+    pageCounter.appendChild(pageCount)
     function loadComments(page = null) {
         $.ajax({
             url: `${url}/getComments`,
@@ -35,7 +38,7 @@ define([
                         saveCommentPage(page)
                     }
                 } else {
-                    //commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
+                    commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
                 }
             },
             error: function (err) {
@@ -63,6 +66,8 @@ define([
             },
             success: function() {
                 loadComments();
+                page = 0;
+                pageCount.innerText = page + 1;
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(JSON.stringify(jqXHR));
@@ -125,6 +130,7 @@ define([
             button.classList.add('btn');
             button.classList.add('btn-success');
             button.innerText = 'Rediģēt';
+            editCommentBlock.classList.add('comment-edit');
             editCommentBlock.appendChild(textarea);
             editCommentBlock.appendChild(button);
             commentBlock.appendChild(editCommentBlock);
@@ -188,7 +194,7 @@ define([
             '                            <a href="#"><b>'+ getUserName(commentData.user_id) +'</b></a>\n' +
             '                            komentēja: \n' +
             '                        </div>\n' +
-            '                        <h6 class="text-muted time">Pievienots: '+ commentData.created_at +'</h6>\n' +
+            '                        <h6 class="text-muted time">Pievienots: '+ new Date(commentData.created_at).toISOString().replace(/T/, ' ').replace(/\..+/, '')    +'</h6>\n' +
             '                    </div>\n' +
             '                </div> \n' +
             '                <div class="post-description"> \n' +
@@ -219,9 +225,9 @@ define([
 
         for (let i=0; i < pages; i++) {
             if (i === 0) {
-                $('#comments > div').slice(comments, comments+maxCommentsPerPage).addClass(`page${i}`).show();
+                $('#comments > div').slice(comments, comments+maxCommentsPerPage).addClass(`page${i} comment`).show();
             } else {
-                $('#comments > div').slice(comments, comments+maxCommentsPerPage).addClass(`page${i}`).hide();
+                $('#comments > div').slice(comments, comments+maxCommentsPerPage).addClass(`page${i} comment`).hide();
             }
             comments += maxCommentsPerPage;
         }
@@ -231,13 +237,19 @@ define([
         if(page < pages - 1) {
             $("#comments > div:visible").hide();
             $('.page' + ++page).show();
+            $("html, body").animate({ scrollTop: "500" });
         }
+    });
+
+    $('.forum-arrows').on('click', function () {
+        pageCount.innerText = page + 1;
     });
 
     $('.prev').on('click',function(){
         if(page > 0) {
             $("#comments > div:visible").hide();
             $('.page' + --page).show();
+            $("html, body").animate({ scrollTop: "500" });
         }
     });
 });

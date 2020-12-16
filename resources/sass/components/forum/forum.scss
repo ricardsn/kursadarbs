@@ -1,5 +1,69 @@
-.prev, .next {
-    height: 100px;
-    width: 100px;
-    background-color: red;
+
+.forum {
+    max-width: 1440px;
+    margin: auto;
+    display: grid;
+
+    .forum-header {
+        grid-row: 1;
+        grid-column: 1/5;
+    }
+
+    .comment-textarea {
+        grid-row: 2;
+        grid-column: 1/5;
+    }
+
+    #comments {
+        grid-row: 3;
+        grid-column: 1/5;
+    }
+
+    &-arrows {
+        grid-row: 4;
+        display: flex;
+        margin: auto;
+        width: 300px;
+        grid-column: 1/5;
+    }
+
+    #pageCount {
+        width: 30%;
+        background-color: $white;
+        text-align: center;
+        font-size: 24px;
+        line-height: 48px;
+    }
+
+    .prev, .next {
+        height: 50px;
+        width: 30%;
+        background-color: $grey;
+        flex: 50%;
+
+        &:hover {
+            cursor: pointer;
+            background-color: $grey-darker;
+        }
+
+        .icon {
+            height: 25px;
+            width: 25px;
+            display: block;
+            margin: 12.5px auto;
+        }
+    }
+
+    .next{
+        .icon {
+            background: url("../../helpers/icons/right-arrow.svg") no-repeat;
+        }
+    }
+
+    .prev{
+        .icon {
+            background: url("../../helpers/icons/left-arrow.svg") no-repeat;
+        }
+    }
+
 }
