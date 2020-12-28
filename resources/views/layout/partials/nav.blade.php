@@ -31,6 +31,15 @@
                         <a class="dropdown-item" href="{{ route('forum.create')  }}">Pievienot</a>
                     </div>
                 </div>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Zivis
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">
+                        <a class="dropdown-item" href="{{ route('fish.index')  }}">Saraksts</a>
+                        <a class="dropdown-item" href="{{ route('fish.create')  }}">Pievienot</a>
+                    </div>
+                </div>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#">Disabled</a>
                 </li>

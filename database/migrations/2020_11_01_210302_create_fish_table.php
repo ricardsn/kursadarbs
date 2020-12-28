@@ -16,7 +16,7 @@ class CreateFishTable extends Migration
         Schema::create('fish', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string('name');
-            $table->text('desc');
+            $table->string('image');
             $table->string('link');
             $table->timestamps();
         });

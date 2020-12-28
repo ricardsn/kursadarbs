@@ -1,7 +1,10 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
+    "/js/fish/edit.js": "/js/fish/edit.js",
+    "/js/fish/uploader.js": "/js/fish/uploader.js",
     "/js/forum/comments.js": "/js/forum/comments.js",
+    "/js/forum/fish-listing.js": "/js/forum/fish-listing.js",
     "/js/map/create-map.js": "/js/map/create-map.js",
     "/js/map/edit-map.js": "/js/map/edit-map.js",
     "/js/vendor/app.js": "/js/vendor/app.js",

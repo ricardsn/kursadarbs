@@ -17,4 +17,7 @@ mix.js('resources/js/app.js', 'public/js')
     .js('resources/js/map/create-map.js', 'public/js/map')
     .js('resources/js/map/edit-map.js', 'public/js/map')
     .js('resources/js/forum/comments', 'public/js/forum')
+    .js('resources/js/forum/fish-listing', 'public/js/forum')
+    .js('resources/js/fish/uploader', 'public/js/fish')
+    .js('resources/js/fish/edit', 'public/js/fish')
     .sass('resources/sass/app.scss', 'public/css');

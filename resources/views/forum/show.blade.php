@@ -11,7 +11,18 @@
                         {{ $reservoirForum->desc }}
                     </div>
                     <div class="card-footer d-flex flex-wrap justify-content-between align-items-center px-0 pt-0 pb-3">
-                        ...
+                        <div class="fish-container" id="fish-container">
+                            <button class="btn btn-success fish-button" id="show-more">Apskatīt zivis</button>
+                            <ul class="fish-list" id="fish-list">
+                                @foreach($fishes as $fish)
+                                   <li class="fish row">
+                                       <img class="mb-auto" src="{{ asset(sprintf('/images/fishes/%s', $fish->image))  }}" alt="fish image" style="width: 200px; height: 100px;">
+                                       <a href="{{ sprintf('%s/fish/%s', \Illuminate\Support\Facades\URL::to('/'), $fish->id)  }}">{{ $fish->name }}</a>
+                                   </li>
+                                @endforeach
+                            </ul>
+                            <button class="btn btn-danger fish-button" id="show-less">Aizvērt</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -30,5 +41,6 @@
         </div>
     </div>
     <script src="{{ asset('js/forum/comments.js')  }}"></script>
+    <script src="{{ asset('js/forum/fish-listing.js')  }}"></script>
 @endsection
 <b></b>

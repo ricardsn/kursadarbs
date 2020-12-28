@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Fish;
 use App\Models\Forum;
 use App\Models\Reservoir;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use function Sodium\add;
 
 class ForumController extends Controller
 {
@@ -110,7 +112,12 @@ class ForumController extends Controller
     public function show($forum)
     {
         $reservoirForum = Forum::where('reservoir_id', $forum)->get()->first();
-        return view('forum.show', compact('reservoirForum'));
+        $fishesIDs = DB::table('fish_reservoir')->where('reservoir_id', $forum)->get()->all();
+        $fishes = [];
+        foreach ($fishesIDs as $fish) {
+            array_push($fishes, Fish::find($fish->fish_id));
+        }
+        return view('forum.show', compact('reservoirForum', 'fishes'));
     }
 
 

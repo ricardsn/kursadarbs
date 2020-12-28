@@ -4,6 +4,9 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservoirController;
 use \App\Http\Controllers\ForumController;
+use App\Http\Controllers\ImageUploadController;
+use App\Http\Controllers\FishController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,10 +29,14 @@ Route::get('/reservoir/showCoordinates', [ReservoirController::class, 'showCoord
 Route::get('/reservoir/{reservoirId}/getCoordinateEdit', [ReservoirController::class, 'getCoordinateEdit']);
 Route::get('/forum/{forumId}/getComments', [ForumController::class, 'getComments']);
 Route::any('/forum/{forumId}/update', [ForumController::class, 'update'])->name('updateForum');
+Route::any('/fish/storeFish', [FishController::class, 'storeFish']);
+Route::any('/comment/store', [CommentController::class, 'store']);
+Route::any('/fish/{fishId}/update', [FishController::class, 'update']);
 
 Route::resource('reservoir', 'App\Http\Controllers\ReservoirController');
 Route::resource('forum', 'App\Http\Controllers\ForumController');
 Route::resource('comment', CommentController::class);
+Route::resource('fish', FishController::class);
 
 Auth::routes();
 

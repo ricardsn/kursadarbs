@@ -200,6 +200,6 @@ class ReservoirController extends Controller
         $this->removeDataBeforeUpdate($id);
 
         return redirect()->route('show')
-            ->with('success','Challenge updated successfully');
+            ->with('success','Reservoir updated successfully');
     }
 }
