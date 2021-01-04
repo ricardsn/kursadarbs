@@ -20,4 +20,5 @@ mix.js('resources/js/app.js', 'public/js')
     .js('resources/js/forum/fish-listing', 'public/js/forum')
     .js('resources/js/fish/uploader', 'public/js/fish')
     .js('resources/js/fish/edit', 'public/js/fish')
+    .js('resources/js/profile/edit', 'public/js/profile')
     .sass('resources/sass/app.scss', 'public/css');

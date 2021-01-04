@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservoirController;
 use \App\Http\Controllers\ForumController;
-use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\FishController;
 
 /*
@@ -39,5 +39,11 @@ Route::resource('comment', CommentController::class);
 Route::resource('fish', FishController::class);
 
 Auth::routes();
+Route::any('/profile',[ProfileController::class, 'index'])->name('profile');
+Route::any('/uploadImage',[ProfileController::class, 'addImage'])->name('uploadImage');
+Route::any('/changePassword',[ProfileController::class, 'changePassword'])->name('changePassword');
+Route::post('/saveNewPassword',[ProfileController::class, 'saveNewPassword'])->name('saveNewPassword');
+Route::any('/editProfile',[ProfileController::class, 'editProfile'])->name('editProfile');
+Route::any('/saveEditProfile',[ProfileController::class, 'saveEditProfile'])->name('saveEditProfile');
 
 Route::get('/', function () {return view('welcome');})->name('home');

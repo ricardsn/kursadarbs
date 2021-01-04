@@ -217,6 +217,23 @@ define([
         return returnResult;
     }
 
+    function loadAfterSort() {
+        commentField.innerText = '';
+        if(comments.length > 0) {
+            comments.forEach(comment => {
+                commentField.appendChild(insertComment(comment))
+            });
+            divideIntoPages();
+            addEditFuncOption();
+            addDeleteFuncOption();
+            if (page) {
+                saveCommentPage(page)
+            }
+        } else {
+            commentField.insertAdjacentHTML('beforeend', '<div class="card card-white post">Komentāru nav... :(</div>')
+        }
+    }
+
     function divideIntoPages() {
         const childNodes = $('#comments').children().length;
         const maxCommentsPerPage = 10;
@@ -251,5 +268,19 @@ define([
             $('.page' + --page).show();
             $("html, body").animate({ scrollTop: "500" });
         }
+    });
+
+    $('#order-selector').on('change', function () {
+       if($('#order-selector').val() === 'newest') {
+           comments.sort(function (first,second) {
+               return new Date(second.created_at) - new Date(first.created_at);
+           });
+           loadAfterSort();
+       } else {
+           comments.sort(function (first,second) {
+               return new Date(first.created_at) - new Date(second.created_at);
+           });
+           loadAfterSort();
+       }
     });
 });

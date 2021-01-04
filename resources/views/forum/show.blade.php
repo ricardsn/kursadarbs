@@ -5,7 +5,7 @@
             <div class="col-md-12 forum-header">
                 <div class="card mb-4">
                     <div class="card-header">
-                       <h1 class="reservoir-header">{{  $reservoirForum->title }}</h1>
+                       <h1 class="reservoir-header">{{ $reservoirForum->title }}</h1>
                     </div>
                     <div class="card-body">
                         {{ $reservoirForum->desc }}
@@ -32,6 +32,10 @@
                 <textarea name="comment-block" id="comment-block" cols="30" rows="10" class="form-control"></textarea>
                 <button id="publish-comment" class="btn-success btn">Publicēt</button>
             </div>
+            <select class="mdb-select md-form" id="order-selector">
+                <option value="newest">Jaunākie -> vecākie</option>
+                <option value="oldest">Vecākie -> Jaunākie</option>
+            </select>
             <div id="comments" class="container"></div>
             <div class="forum-arrows">
                 <div class="prev"><span class="icon"></span></div>

@@ -34911,15 +34911,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   });
 
+  function insertLink(id) {
+    var link = '<a href="' + window.location.origin + '/forum/' + id + '">Vairāk informācijas</a>';
+    return link;
+  }
+
   function addStoreToMapSearch(reservoir, coordinate) {
-    var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] + reservoir['type']);
+    var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] + '</br>' + reservoir['type'] + '</br>' + insertLink(reservoir['id']));
     markers.addLayer(marker); // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
   }
 
   function addStoreToMapLoad(reservoir) {
     var marker = L.marker([reservoir['lat'], reservoir['long']], {
       icon: customIcon
-    }).bindPopup(reservoir['name'] + reservoir['type']);
+    }).bindPopup(reservoir['name'] + '</br>' + reservoir['type'] + '</br>' + insertLink(reservoir['id']));
     markers.addLayer(marker); // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
   }
 
@@ -34998,7 +35003,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     markers.addLayer(L.marker(location, {
       icon: customIcon
     }).bindPopup('Jūs atrodaties šeit'));
-    console.log(markers);
 
     if (selection[selection.selectedIndex].value === 'Ezers') {
       searchedReservoirs = lakes;

@@ -89,14 +89,20 @@ define([
         }
     });
 
+    function insertLink(id) {
+        const link = '<a href="'+ window.location.origin+'/forum/'+id +'">Vairāk informācijas</a>'
+
+        return link;
+    }
+
     function addStoreToMapSearch(reservoir, coordinate) {
-        let marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] + reservoir['type']);
+        let marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] +'</br>'+ reservoir['type'] + '</br>' + insertLink(reservoir['id']));
         markers.addLayer(marker);
         // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
     }
 
     function addStoreToMapLoad(reservoir) {
-        let marker = L.marker([reservoir['lat'], reservoir['long']], {icon: customIcon}).bindPopup(reservoir['name'] + reservoir['type']);
+        let marker = L.marker([reservoir['lat'], reservoir['long']], {icon: customIcon}).bindPopup(reservoir['name']+ '</br>' + reservoir['type']  + '</br>' + insertLink(reservoir['id']));
         markers.addLayer(marker);
         // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
     }
@@ -186,7 +192,6 @@ define([
         let searchedReservoirs = [];
         let selection = typeSelector[0].options;
         markers.addLayer(L.marker(location, {icon: customIcon}).bindPopup('Jūs atrodaties šeit'));
-        console.log(markers)
         if (selection[selection.selectedIndex].value === 'Ezers') {
             searchedReservoirs = lakes;
         } else if (selection[selection.selectedIndex].value === 'Upe') {

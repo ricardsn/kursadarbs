@@ -50,6 +50,9 @@ class ReservoirController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     */
     public function saveCoordinates(Request $request) {
         $reservoir = array(
             'name' => $request->name,

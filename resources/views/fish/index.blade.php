@@ -3,8 +3,8 @@
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">Bilde</th>
             <th scope="col">Zivs</th>
+            <th scope="col">Bilde</th>
             <th scope="col">Izveidots</th>
             <th scope="col">Atjaunots</th>
             <th scope="col">Opcijas</th>
