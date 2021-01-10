@@ -10,10 +10,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use function Sodium\add;
 
 class ForumController extends Controller
 {
+    const ADMIN = 'administrator';
+    const REG_USER = 'registered_user';
+
     /**
      * Display a listing of the resource.
      *
@@ -32,8 +34,14 @@ class ForumController extends Controller
      */
     public function create()
     {
-        $possibleForms = $this->getFutureForms();
-        return view('forum.create', compact('possibleForms'));
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                $possibleForms = $this->getFutureForms();
+                return view('forum.create', compact('possibleForms'));
+            }
+        }
+
+        return redirect()->route('forum.index')->with('error', 'Forumu var pievienot tikai administrators!');
     }
 
     /**
@@ -42,7 +50,7 @@ class ForumController extends Controller
      * @return array
      */
     public function getFutureForms() {
-        $reservoirs = Reservoir::all();
+        $reservoirs = Reservoir::all()->where('status', true);
         $futureForms = [];
 
         foreach ($reservoirs as $reservoir) {
@@ -72,7 +80,8 @@ class ForumController extends Controller
         try {
             $data = [
               'comments' => Comment::where('forum_id', $forumId)->get(),
-              'user_data' => User::all('id', 'name')
+              'user_data' => User::all('id', 'name'),
+              'curr_user' => Auth::guest() ? null : Auth::id()
             ];
             json_encode($data);
         }
@@ -91,17 +100,41 @@ class ForumController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        $forum = [
-           'title' => $request->title,
-           'desc' => $request->desc,
-           'reservoir_id' => $request->reservoir
-        ];
+        $message = $this->validation($request->title, $request->desc, $request->reservoir);
+       if (empty($message)) {
+           $forum = [
+               'title' => $request->title,
+               'desc' => $request->desc,
+               'reservoir_id' => $request->reservoir
+           ];
 
-        Forum::create($forum);
-        return redirect()->route('forum.index')
-            ->with('success', 'Forum updated successfully');
+           Forum::create($forum);
+           return redirect()->route('forum.index')
+               ->with('success', 'Diskusija tika pievienota veiksmīgi!');
+       }
+
+        return redirect()->route('forum.create')->with('error-array',$message)->withInput($request->all());
+    }
+
+    public function validation($title, $desc, $reservoirId)
+    {
+        $message = [];
+
+        if (strlen($title) < 8 || !preg_match('/^[a-žA-Ž\s]+$/', $title)) {
+            array_push($message, 'Diskusijas nosaukums ir mazāks par 8 burtiem vai satur simbolus, kas nav latīniski burti.');
+        }
+
+        if (strlen($desc) < 40) {
+            array_push($message, 'Diskusijas apraksts satur mazāk par 40 simboliem.');
+        }
+
+        if(!Reservoir::find($reservoirId)) {
+            array_push($message, 'Pievienotā ūdenstilpne neeksistē datubāzē.');
+        }
+
+        return $message;
     }
 
 
@@ -112,12 +145,17 @@ class ForumController extends Controller
     public function show($forum)
     {
         $reservoirForum = Forum::where('reservoir_id', $forum)->get()->first();
-        $fishesIDs = DB::table('fish_reservoir')->where('reservoir_id', $forum)->get()->all();
-        $fishes = [];
-        foreach ($fishesIDs as $fish) {
-            array_push($fishes, Fish::find($fish->fish_id));
+
+        if (!empty($reservoirForum)) {
+            $fishesIDs = DB::table('fish_reservoir')->where('reservoir_id', $forum)->get()->all();
+            $fishes = [];
+            foreach ($fishesIDs as $fish) {
+                array_push($fishes, Fish::find($fish->fish_id));
+            }
+            return view('forum.show', compact('reservoirForum', 'fishes'));
         }
-        return view('forum.show', compact('reservoirForum', 'fishes'));
+
+        return redirect()->route('forum.index')->with('error','Diskusija ar doto ID neeksistē datubāzē.');
     }
 
 
@@ -127,8 +165,14 @@ class ForumController extends Controller
      */
     public function edit(Forum $forum)
     {
-        $possibleForms = $this->getFutureForms();
-        return view('forum.edit', compact('forum', 'possibleForms'));
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                $possibleForms = $this->getFutureForms();
+                return view('forum.edit', compact('forum', 'possibleForms'));
+            }
+        }
+
+        return redirect()->route('forum.index')->with('error', 'Forumu var rediģēt tikai administrators!');
     }
 
 
@@ -139,10 +183,17 @@ class ForumController extends Controller
      */
     public function update(Request $request, $forumId)
     {
-        $forum = Forum::find($forumId);
-        $forum->update($request->all());
-        return redirect()->route('forum.edit', $forum->id)
-            ->with('success', 'Forum updated successfully');
+        $message = $this->validation($request->title, $request->desc, $request->reservoir_id);
+        if (empty($message)) {
+            $forum = Forum::find($forumId);
+            $forum->update($request->all());
+
+            return redirect()->route('forum.edit', $forum->id)
+                ->with('success', 'Diskusija ir atjaunota veiksmīgi');
+        }
+
+        return redirect()->route('forum.edit', $forumId)->with('error-array',$message);
+
     }
 
 
@@ -152,10 +203,20 @@ class ForumController extends Controller
      */
     public function destroy($forumId)
     {
-        DB::table('comments')->where('forum_id', $forumId)->delete();
-        $forum = Forum::find($forumId);
-        $forum->delete();
-        return redirect()->route('forum.index')
-            ->with('success', 'Forum updated successfully');
+        if (empty(Forum::find($forumId))) {
+            return redirect()->route('forum.index')->with('error', 'Diskusija ar doto ID neeksistē.');
+        }
+
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                DB::table('comments')->where('forum_id', $forumId)->delete();
+                $forum = Forum::find($forumId);
+                $forum->delete();
+                return redirect()->route('forum.index')
+                    ->with('success', 'Diskusija ir izdzēsta veiksmīgi');
+            }
+        }
+
+        return redirect()->route('forum.index')->with('error', 'Forumu var izdzēst tikai administrators!');
     }
 }

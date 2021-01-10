@@ -1,12 +1,6 @@
 @extends('layout.mainlayout')
 
 @section('content')
-    @if(session('error'))
-        <h4 class="alert-danger">{{session('error')}}</h4>
-    @endif
-    @if(session('success'))
-        <h4 class="alert-success">{{session('success')}}</h4>
-    @endif
     <form class="form-container" action="{{ route('saveNewPassword')  }}" method="POST">
         @csrf
         <h3>Mainīt paroli</h3>

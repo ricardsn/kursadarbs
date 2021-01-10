@@ -25099,15 +25099,63 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     markers.addLayer(marker); // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
   }
 
+  function validate(name, lat, _long, radius, type, fishes) {
+    var nameValidator = new RegExp(/^[a-žA-Ž\s]+$/);
+    var errorMsg = [];
+
+    if (name.length < 3) {
+      errorMsg.push('Ūdenstilpnes nosaukumam ir jābūt vismaz 3 burtu garam.');
+    }
+
+    if (!nameValidator.test(name)) {
+      errorMsg.push('Ūdenstilpnes nosaukumam ir jāsatur no latīniskiem burtiem.');
+    }
+
+    if (!$.isNumeric(lat) || !$.isNumeric(_long)) {
+      errorMsg.push('Ūdenstilpnes koordinātēm ir jābūt decimālskaitlim.');
+    }
+
+    if (Number.isInteger(radius) || radius < 1) {
+      errorMsg.push('Rādiuss nav naturāls skaitlis.');
+    }
+
+    if (type !== 'Ezers' && type !== 'Upe') {
+      errorMsg.push('Izvēlētais tips nav atpazīts.');
+    }
+
+    if (coordinates.length < 1) {
+      errorMsg.push('Neviena koordināte nav pievienota.');
+    }
+
+    if (fishes.length < 1) {
+      errorMsg.push('Neviena zivs nav pievienota.');
+    }
+
+    return errorMsg;
+  }
+
   saveButton.onclick = function () {
     var name = $('#name').val();
     var lat = $('#lat').val();
 
-    var _long = $('#long').val();
+    var _long2 = $('#long').val();
 
     var radius = $('#radius-select').val();
     var type = $('#type').val();
     var fishes = $('#fish-dropdown').val();
+    var errorContainer = $('#js-errors');
+    var errorMsg = validate(name, lat, _long2, radius, type, fishes);
+    errorContainer.innerText = '';
+
+    if (errorMsg.length !== 0) {
+      var message = '';
+      $.each(errorMsg, function (index, error) {
+        message += error + '<br />';
+      });
+      errorContainer.html(message);
+      return;
+    }
+
     $.ajax({
       method: "POST",
       url: "".concat(url, "/update"),
@@ -25118,7 +25166,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       data: {
         name: name,
         lat: lat,
-        "long": _long,
+        "long": _long2,
         radius: radius,
         type: type,
         fishes: fishes,

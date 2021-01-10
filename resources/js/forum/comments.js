@@ -6,8 +6,10 @@ define([
     "use strict";
     const url = window.location.pathname;
     const commentField = document.getElementById('comments');
+    const commentErrorField = $('#comment-error');
     let users = [];
     let comments = [];
+    let currUser = null;
     const saveButton = document.getElementById("publish-comment");
     let pages = 0;
     let page = 0;
@@ -23,10 +25,12 @@ define([
             success: function (data) {
                 users = data.user_data;
                 comments = data.comments;
+                currUser = data.curr_user;
                 comments.sort(function (first,second) {
                     return new Date(second.created_at) - new Date(first.created_at);
                 });
                 commentField.innerText = '';
+                commentErrorField.hide();
                 if(comments.length > 0) {
                     comments.forEach(comment => {
                         commentField.appendChild(insertComment(comment))
@@ -49,38 +53,86 @@ define([
 
     loadComments();
 
-    saveButton.onclick = () => {
-        const commentData = $('#comment-block').val();
-        const id = window.location.pathname.replace('/forum/','');
+    function validation(commentData) {
+        let message = [];
 
-        $.ajax({
-            method: "POST",
-            url: "/comment/store",
-            dataType: 'html',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                commentData: commentData,
-                reservoirId: id
-            },
-            success: function() {
-                loadComments();
-                page = 0;
-                pageCount.innerText = page + 1;
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(JSON.stringify(jqXHR));
-                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-                alert('Error occured look into console logs')
+        if (commentData === '') {
+            message.push('Komentāra saturs ir tukšs.')
+        }
+
+        if (currUser === null) {
+            message.push('Neautorizēts lietotājs nevar pievienot komentāru.')
+        }
+
+        return message;
+    }
+
+    if (saveButton) {
+        saveButton.onclick = () => {
+            const commentData = $('#comment-block').val();
+            const id = window.location.pathname.replace('/forum/','');
+            const messages = validation(commentData);
+
+            commentErrorField.html('');
+            commentErrorField.hide();
+
+            if(messages.length !== 0) {
+                let message = '';
+
+                $.each(messages, function (index, error) {
+                    message += error + '<br />';
+                });
+                commentErrorField.html(message);
+                commentErrorField.show();
+                return;
             }
-        });
-    };
+
+            $.ajax({
+                method: "POST",
+                url: "/comment/store",
+                dataType: 'html',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    commentData: commentData,
+                    reservoirId: id
+                },
+                success: function() {
+                    loadComments();
+                    page = 0;
+                    pageCount.innerText = page + 1;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(JSON.stringify(jqXHR));
+                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                    alert('Error occured look into console logs')
+                }
+            });
+        };
+    }
 
     function updateComment() {
         const commentId = (this.id).replace('button-', '');
-        const commentData = $('#comment-edit-data'+commentId).val();
+        const commentField =  $('#comment-edit-data'+commentId);
+        const commentData = commentField.val();
         const commentBlock = this.parentNode.parentNode.parentNode.classList[0];
+        const messages = validation(commentData);
+        const errorCommentField = $('#error-comment-edit');
+
+        errorCommentField.html('');
+        errorCommentField.hide();
+
+        if(messages.length !== 0) {
+            let message = '';
+
+            $.each(messages, function (index, error) {
+                message += error + '<br />';
+            });
+            errorCommentField.html(message);
+            errorCommentField.show();
+            return;
+        }
 
         $.ajax({
             method: "PATCH",
@@ -121,6 +173,8 @@ define([
         const editCommentBlock = document.createElement('div');
         const textarea = document.createElement('textarea');
         const button = document.createElement('button');
+        const errorMsg = document.createElement('div');
+
         if (!document.getElementById('button-'+commentId)) {
             textarea.name = 'comment-edit-data'+commentId;
             textarea.id = 'comment-edit-data'+commentId;
@@ -130,7 +184,12 @@ define([
             button.classList.add('btn');
             button.classList.add('btn-success');
             button.innerText = 'Rediģēt';
+            errorMsg.classList.add('alert');
+            errorMsg.classList.add('alert-danger');
+            errorMsg.id = 'error-comment-edit';
+            errorMsg.style.display = 'none';
             editCommentBlock.classList.add('comment-edit');
+            editCommentBlock.appendChild(errorMsg);
             editCommentBlock.appendChild(textarea);
             editCommentBlock.appendChild(button);
             commentBlock.appendChild(editCommentBlock);
@@ -176,16 +235,28 @@ define([
         }
     }
 
+    function addOptions(commentData) {
+        if(currUser) {
+            if(currUser === commentData.user_id) {
+                return (
+                    '<div class="nav-item dropdown">\n' +
+                    '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                    '                    </div>\n' +
+                    '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n'+
+                    '                        <a class="dropdown-item edit" id="'+ commentData.id +'">Rediģēt</a>\n' +
+                    '                        <a class="dropdown-item delete" id="delete'+ commentData.id +'">Dzēst</a>\n' +
+                    '                    </div>\n' +
+                    '                </div>'
+                );
+            }
+        }
+
+        return '';
+    }
+
     function insertComment(commentData) {
         const div = document.createElement('div');
-        const options = '<div class="nav-item dropdown">\n' +
-            '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
-            '                    </div>\n' +
-            '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n'+
-            '                        <a class="dropdown-item edit" id="'+ commentData.id +'">Rediģēt</a>\n' +
-            '                        <a class="dropdown-item delete" id="delete'+ commentData.id +'">Dzēst</a>\n' +
-            '                    </div>\n' +
-            '                </div>';
+        const options = addOptions(commentData);
 
         div.innerHTML = ' <div class="card card-white post">\n' + options +
             '                <div class="post-heading">\n' +
@@ -202,6 +273,7 @@ define([
             '\n' +
             '                </div>\n' +
             '            </div>';
+
         return div;
     }
 

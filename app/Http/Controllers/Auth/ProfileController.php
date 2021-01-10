@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,12 @@ class ProfileController extends Controller
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index() {
-       $user = Auth::user();
-       return view('auth.index', compact('user'));
+        if (!Auth::guest()) {
+            $user = Auth::user();
+            return view('auth.index', compact('user'));
+        }
+
+        return redirect()->route('login')->with('error', 'Lietotājs nav autorizēts..');
    }
 
     /**
@@ -34,13 +39,17 @@ class ProfileController extends Controller
        $user->save();
 
        return back()
-           ->with('success','You have successfully upload image.')
+           ->with('success','Lietotājam tika pievienota bilde.')
            ->with('image',$imageName);
    }
 
    public function changePassword() {
-       $user = Auth::user();
-       return view('auth.changePassword', compact('user'));
+       if (!Auth::guest()) {
+           $user = Auth::user();
+           return view('auth.changePassword', compact('user'));
+       }
+
+       return redirect()->route('login');
    }
 
     /**
@@ -48,25 +57,48 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function saveNewPassword(Request $request) {
-       $user = Auth::user();
+        if (!Auth::guest()) {
+            $user = Auth::user();
 
-       if(!Hash::check($request->curr_password, $user->getAuthPassword())) {
-           return redirect()->route('changePassword')->with('error','Nepareiza tagadēja parole.');
+            if(!Hash::check($request->curr_password, $user->getAuthPassword())) {
+                return redirect()->route('changePassword')->with('error','Nepareiza tagadēja parole.');
+            }
+
+            if (strlen($request->new_password) < 8) {
+                return redirect()->route('changePassword')->with('error','Jaunās paroles garums ir mazāks par 8.');
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return redirect()->route('changePassword')->with('success','Parole tika atjaunota.');
+        }
+
+        return redirect()->route('login');
+   }
+
+   public function getEmails() {
+       try {
+           $emails = User::all()->where('email','!=',Auth::user()->email)->pluck('email');
+           json_encode($emails);
        }
-
-       if (strlen($request->new_password) < 8) {
-           return redirect()->route('changePassword')->with('error','Jaunās paroles garums ir mazāks par 8.');
+       catch (\mysql_xdevapi\Exception $exception) {
+           $data = [
+               'status' => 'error',
+               'message' => $exception
+           ];
+           $emails->toJson();
        }
-
-       $user->password = Hash::make($request->new_password);
-       $user->save();
-
-       return redirect()->route('changePassword')->with('success','Parole tika atjaunota.');
+       return $emails;
    }
 
    public function editProfile() {
-       $user = Auth::user();
-       return view('auth.edit', compact('user'));
+        if (!Auth::guest()) {
+            $user = Auth::user();
+            return view('auth.edit', compact('user'));
+        }
+
+       return redirect()->route('login')->with('error', 'Lietotājs nav autorizēts..');
    }
 
    public function saveEditProfile(Request $request) {

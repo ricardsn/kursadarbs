@@ -16,7 +16,14 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdowns">
                         <a class="dropdown-item" href="{{ route('show')  }}">Saraksts</a>
-                        <a class="dropdown-item" href="{{ route('reservoir.create')  }}">Pievienot</a>
+                        @auth
+                            @if(Auth::user()->role == 'administrator' || 'registered_user')
+                                <a class="dropdown-item" href="{{ route('reservoir.create')  }}">Pievienot</a>
+                            @endif
+                            @if (Auth::user()->role == 'administrator')
+                                    <a class="dropdown-item" href="{{ route('unaccepted')  }}">Neakceptētās ūdenstilpnes</a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
                 <div class="nav-item dropdown">
@@ -25,7 +32,11 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdowns">
                         <a class="dropdown-item" href="{{ route('forum.index')  }}">Saraksts</a>
-                        <a class="dropdown-item" href="{{ route('forum.create')  }}">Pievienot</a>
+                        @auth
+                            @if(Auth::user()->role == 'administrator')
+                                <a class="dropdown-item" href="{{ route('forum.create')  }}">Pievienot</a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
                 <div class="nav-item dropdown">
@@ -34,7 +45,11 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdowns">
                         <a class="dropdown-item" href="{{ route('fish.index')  }}">Saraksts</a>
-                        <a class="dropdown-item" href="{{ route('fish.create')  }}">Pievienot</a>
+                        @auth
+                            @if(Auth::user()->role == 'administrator')
+                                <a class="dropdown-item" href="{{ route('fish.create')  }}">Pievienot</a>
+                            @endif
+                        @endauth
                     </div>
                 </div>
             </ul>

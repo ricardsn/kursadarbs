@@ -20,10 +20,14 @@
                 <td>
                     <form action="{{ route('fish.destroy',$fish->id) }}" method="POST">
                         <a href="{{ sprintf('%s/%s', \Illuminate\Support\Facades\URL::to('/fish'), $fish->id)  }}" class="btn btn-success">Apskatīt</a>
-                        <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/fish'), $fish->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Dzēst</button>
+                        @auth()
+                            @if(Auth::user()->role == 'administrator')
+                                <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/fish'), $fish->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Dzēst</button>
+                            @endif
+                        @endauth
                     </form>
                 </td>
             </tr>

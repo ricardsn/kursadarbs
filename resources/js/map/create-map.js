@@ -33,6 +33,41 @@ define([
         radius = radiusSelector.value;
     }
 
+    function validate(name, lat, long, radius, type, fishes) {
+        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/)
+        const errorMsg = [];
+
+         if (name.length < 3) {
+            errorMsg.push('Ūdenstilpnes nosaukumam ir jābūt vismaz 3 burtu garam.');
+         }
+
+         if (!nameValidator.test(name)) {
+             errorMsg.push('Ūdenstilpnes nosaukumam ir jāsatur no latīniskiem burtiem.');
+         }
+
+         if (!$.isNumeric(lat) || !$.isNumeric(long)) {
+             errorMsg.push('Ūdenstilpnes koordinātēm ir jābūt decimālskaitlim.');
+         }
+
+         if (Number.isInteger(radius) || radius < 1) {
+             errorMsg.push('Rādiuss nav naturāls skaitlis.');
+         }
+
+         if (type !== 'Ezers' && type !== 'Upe') {
+             errorMsg.push('Izvēlētais tips nav atpazīts.');
+         }
+
+         if(coordinates.length < 1) {
+             errorMsg.push('Neviena koordināte nav pievienota.');
+         }
+
+         if (fishes.length < 1) {
+             errorMsg.push('Neviena zivs nav pievienota.');
+         }
+
+         return errorMsg;
+    }
+
     saveButton.onclick = () => {
         const name = $('#name').val();
         const lat = $('#lat').val();
@@ -40,6 +75,20 @@ define([
         const radius = $('#radius-select').val();
         const type = $('#type').val();
         const fishes = $('#fish-dropdown').val();
+        const errorContainer = $('#js-errors');
+        const errorMsg = validate(name, lat, long, radius, type, fishes);
+
+        errorContainer.html('');
+
+        if(errorMsg.length !== 0) {
+            let message = '';
+
+            $.each(errorMsg, function (index, error) {
+               message += error + '<br />';
+            });
+            errorContainer.html(message);
+            return;
+        }
 
         $.ajax({
             method: "POST",
@@ -58,7 +107,7 @@ define([
                 coordinates: JSON.stringify(coordinates)
             },
             success: function(data) {
-                alert('Successfully saved!');
+                alert('Ūdenstilpne veiksmīgi saglabāta!');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(JSON.stringify(jqXHR));

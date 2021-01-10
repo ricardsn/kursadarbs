@@ -26,12 +26,15 @@
                     </div>
                 </div>
             </div>
-            <div class="comment-textarea">
-                @csrf
-                <h3 class="comment-textarea-header">Pievienot komentāru:</h3>
-                <textarea name="comment-block" id="comment-block" cols="30" rows="10" class="form-control"></textarea>
-                <button id="publish-comment" class="btn-success btn">Publicēt</button>
-            </div>
+            @auth
+                <div class="comment-textarea">
+                    <div class="alert alert-danger" id="comment-error"></div>
+                    @csrf
+                    <h3 class="comment-textarea-header">Pievienot komentāru:</h3>
+                    <textarea name="comment-block" id="comment-block" cols="30" rows="10" class="form-control"></textarea>
+                    <button id="publish-comment" class="btn-success btn">Publicēt</button>
+                </div>
+            @endauth
             <select class="mdb-select md-form" id="order-selector">
                 <option value="newest">Jaunākie -> vecākie</option>
                 <option value="oldest">Vecākie -> Jaunākie</option>

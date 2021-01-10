@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -25042,9 +25042,9 @@ return jQuery;
 
 /***/ }),
 
-/***/ "./resources/js/map/create-map.js":
+/***/ "./resources/js/map/single-map.js":
 /*!****************************************!*\
-  !*** ./resources/js/map/create-map.js ***!
+  !*** ./resources/js/map/single-map.js ***!
   \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -25053,12 +25053,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   "use strict";
 
   var mymap = L.map('createmap').setView([56.9496, 24.1052], 7);
-  var radius = 0;
   var coordinates = [];
   var markers = L.layerGroup();
-  var radiusSelector = document.getElementById('radius-select');
-  var saveButton = document.getElementById('save-reservoir'); // let createMap = L.map('createmap').setView([56.9496, 24.1052], 7);
-
+  var url = window.location.pathname.replace('/showSingleReservoir', '');
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -25067,120 +25064,44 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoicmljYXJkc24iLCJhIjoiY2tnY2xmODJmMDdwbDJ4cXgxZmI0NjIwYyJ9.HpPK7-zynFDLXr3Akf4B1A'
   }).addTo(mymap);
-  radiusSelector.onchange = setRadius;
   mymap.addLayer(markers);
-
-  function setRadius() {
-    coordinates = [];
-    markers.clearLayers();
-    radius = radiusSelector.value;
-  }
-
-  function validate(name, lat, _long, radius, type, fishes) {
-    var nameValidator = new RegExp(/^[a-žA-Ž\s]+$/);
-    var errorMsg = [];
-
-    if (name.length < 3) {
-      errorMsg.push('Ūdenstilpnes nosaukumam ir jābūt vismaz 3 burtu garam.');
-    }
-
-    if (!nameValidator.test(name)) {
-      errorMsg.push('Ūdenstilpnes nosaukumam ir jāsatur no latīniskiem burtiem.');
-    }
-
-    if (!$.isNumeric(lat) || !$.isNumeric(_long)) {
-      errorMsg.push('Ūdenstilpnes koordinātēm ir jābūt decimālskaitlim.');
-    }
-
-    if (Number.isInteger(radius) || radius < 1) {
-      errorMsg.push('Rādiuss nav naturāls skaitlis.');
-    }
-
-    if (type !== 'Ezers' && type !== 'Upe') {
-      errorMsg.push('Izvēlētais tips nav atpazīts.');
-    }
-
-    if (coordinates.length < 1) {
-      errorMsg.push('Neviena koordināte nav pievienota.');
-    }
-
-    if (fishes.length < 1) {
-      errorMsg.push('Neviena zivs nav pievienota.');
-    }
-
-    return errorMsg;
-  }
-
-  saveButton.onclick = function () {
-    var name = $('#name').val();
-    var lat = $('#lat').val();
-
-    var _long2 = $('#long').val();
-
-    var radius = $('#radius-select').val();
-    var type = $('#type').val();
-    var fishes = $('#fish-dropdown').val();
-    var errorContainer = $('#js-errors');
-    var errorMsg = validate(name, lat, _long2, radius, type, fishes);
-    errorContainer.html('');
-
-    if (errorMsg.length !== 0) {
-      var message = '';
-      $.each(errorMsg, function (index, error) {
-        message += error + '<br />';
+  $.ajax({
+    url: "".concat(url, "/getCoordinateEdit"),
+    dataFormat: 'json',
+    data: {},
+    success: function success(data) {
+      coordinates = data;
+      $.each(coordinates, function (index, coordinate) {
+        addStoreToMapLoad(coordinate);
       });
-      errorContainer.html(message);
-      return;
-    }
+      mymap.addLayer(markers);
 
-    $.ajax({
-      method: "POST",
-      url: "/reservoir/saveCoordinates",
-      dataType: 'html',
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      data: {
-        name: name,
-        lat: lat,
-        "long": _long2,
-        radius: radius,
-        type: type,
-        fishes: fishes,
-        coordinates: JSON.stringify(coordinates)
-      },
-      success: function success(data) {
-        alert('Ūdenstilpne veiksmīgi saglabāta!');
-      },
-      error: function error(jqXHR, textStatus, errorThrown) {
-        console.log(JSON.stringify(jqXHR));
-        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-        alert('Error occured look into console logs');
+      if (!(coordinates.length > 300)) {
+        mymap.setView([coordinates[0]['lat'], coordinates[0]['long']], 10);
       }
-    });
-  };
+    },
+    error: function error(err) {
+      alert("Error : " + JSON.stringify(err));
+    }
+  });
 
-  mymap.on('click', addMarker);
-
-  function addMarker(e) {
-    // Add marker to reservoir at click location; add popup window
-    var newMarker = new L.circle(e.latlng, parseInt(radius)).addTo(mymap);
-    markers.addLayer(newMarker);
-    coordinates.push(newMarker._latlng);
+  function addStoreToMapLoad(coordinate) {
+    var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']);
+    markers.addLayer(marker);
   }
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
 
-/***/ 3:
+/***/ 5:
 /*!**********************************************!*\
-  !*** multi ./resources/js/map/create-map.js ***!
+  !*** multi ./resources/js/map/single-map.js ***!
   \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\wamp64\www\KursaDarbs_rn18011\kursa-darbs\resources\js\map\create-map.js */"./resources/js/map/create-map.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\KursaDarbs_rn18011\kursa-darbs\resources\js\map\single-map.js */"./resources/js/map/single-map.js");
 
 
 /***/ })

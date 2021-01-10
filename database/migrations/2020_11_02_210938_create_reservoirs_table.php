@@ -19,6 +19,7 @@ class CreateReservoirsTable extends Migration
             $table->decimal('lat');
             $table->decimal('long');
             $table->string('type');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

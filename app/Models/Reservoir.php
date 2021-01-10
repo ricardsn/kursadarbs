@@ -13,7 +13,8 @@ class Reservoir extends Model
         'name',
         'lat',
         'long',
-        'type'
+        'type',
+        'status'
     ];
 
     protected $primaryKey = 'id';

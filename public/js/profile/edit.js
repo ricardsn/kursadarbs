@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10984,12 +10984,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var changeButton = document.getElementById('change-image');
   var changeContent = document.getElementById('change');
   var imageUploader = document.getElementById('ImageUploader');
+  var errorContainer = $('#js-errors');
+  var takenEmails = null;
   var formData = new FormData();
   var changeImage = false;
+  var imageFile = null;
   $('#uploaded-image').change(function () {
     if ($(this).prop('files').length > 0) {
-      var file = $(this).prop('files')[0];
-      formData.append('image', file);
+      imageFile = $(this).prop('files')[0];
+      formData.append('image', imageFile);
+    }
+  });
+  $.ajax({
+    method: "GET",
+    url: "/profile/getEmails",
+    dataType: 'html',
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function success(data) {
+      takenEmails = JSON.parse(data);
+    },
+    error: function error(err) {
+      alert("Error : " + JSON.stringify(err));
     }
   });
 
@@ -11000,8 +11017,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     formData.append('_method', 'PUT');
   }
 
+  function validation() {
+    var message = [];
+    var emailValidator = new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');
+
+    if ($.inArray($('#email').val(), takenEmails) === 1) {
+      message.push('Norādītā e-pasta adrese jau ir izmantota.');
+    }
+
+    if (!emailValidator.test($('#email').val())) {
+      message.push('E-pasts ir nepareiza formāta.');
+    }
+
+    if ($('#name').val().length < 3) {
+      message.push('Vārds ir īsāks par 3 simboliem.');
+    }
+
+    if (changeImage) {
+      if (imageFile.size > 2147484) {
+        message.push('Bildes svars ir lielāks par 2,048 MB.');
+      }
+
+      if (!(imageFile.type === 'image/jpeg' || imageFile.type === 'image/png' || imageFile.type === 'image/jpg' || imageFile.type === 'image/gif' || imageFile.type === 'image/svg')) {
+        message.push('Derīgie bildes formāti - jpeg, png, jpg, gif un svg.');
+      }
+    }
+
+    return message;
+  }
+
   uploadButton.onclick = function () {
     getData();
+    var errorMsg = validation();
+    errorContainer.html('');
+
+    if (errorMsg.length !== 0) {
+      var message = '';
+      $.each(errorMsg, function (index, error) {
+        message += error + '<br />';
+      });
+      errorContainer.html(message);
+      $('#success').hide();
+      return;
+    }
+
     $.ajax({
       method: "POST",
       url: "saveEditProfile",
@@ -11031,7 +11090,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 9:
+/***/ 10:
 /*!*****************************************!*\
   !*** multi ./resources/js/profile/edit ***!
   \*****************************************/

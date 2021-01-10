@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fish;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
 class FishController extends Controller
 {
+    const ADMIN = 'administrator';
+    const REG_USER = 'registered_user';
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +31,13 @@ class FishController extends Controller
      */
     public function create()
     {
-        return view('fish.create');
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                return view('fish.create');
+            }
+        }
+
+        return redirect()->route('fish.index')->with('error', 'Zivs sugu var pievienot tikai administrators!');
     }
 
     /**
@@ -68,6 +78,10 @@ class FishController extends Controller
      */
     public function show(Fish $fish)
     {
+        if (!Fish::find($fish->id)) {
+            return redirect()->route('fish.index')->with('error', 'Zivs suga ar doto identifikatoru neeksistē datubāzē!');
+        }
+
         return view('fish.show', compact('fish'));
     }
 
@@ -79,7 +93,13 @@ class FishController extends Controller
      */
     public function edit(Fish $fish)
     {
-        return view('fish.edit', compact('fish'));
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                return view('fish.edit', compact('fish'));
+            }
+        }
+
+        return redirect()->route('fish.index')->with('error', 'Zivs sugu var rediģēt tikai administrators!');
     }
 
     /**
@@ -121,14 +141,25 @@ class FishController extends Controller
      */
     public function destroy(Fish $fish): \Illuminate\Http\RedirectResponse
     {
-        DB::table('fish_reservoir')->where('fish_id', $fish->id)->delete();
-        $image_path = sprintf('%s/images/fishes/%s', public_path(), $fish->image);
-        if(File::exists($image_path)) {
-            File::delete($image_path);
+        if (!Fish::find($fish->id)) {
+            return redirect()->route('fish.index')->with('error', 'Zivs suga ar doto identifikatoru neeksistē datubāzē!');
         }
-        $fish->delete();
 
-        return redirect()->route('fish.index')
-            ->with('success','Challenge updated successfully');
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                DB::table('fish_reservoir')->where('fish_id', $fish->id)->delete();
+                $image_path = sprintf('%s/images/fishes/%s', public_path(), $fish->image);
+                if(File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $fish->delete();
+
+                return redirect()->route('fish.index')
+                    ->with('success','Zivs suga tika izdzēsta!');
+
+            }
+        }
+
+        return redirect()->route('fish.index')->with('error', 'Zivs sugu var izdzēst tikai administrators!');
     }
 }

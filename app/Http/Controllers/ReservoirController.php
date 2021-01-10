@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Fish;
 use App\Models\Reservoir;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use mysql_xdevapi\Table;
-use Symfony\Component\Console\Input\Input;
 
 class ReservoirController extends Controller
 {
+    const ADMIN = 'administrator';
+    const REG_USER = 'registered_user';
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
@@ -22,21 +23,38 @@ class ReservoirController extends Controller
 
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function create()
     {
         $fishes = Fish::all(['id', 'name']);
-        return view('reservoir.create', compact('fishes'));
+        if (!Auth::guest()) {
+            return view('reservoir.create', compact('fishes'));
+        }
+
+        return redirect()->route('home')->with('error', 'Tikai administrators var pievienot ūdenstilpni!');
     }
 
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function showCoordinates() {
-        $coordinates = Reservoir::all();
-        return view('reservoir.show', compact('coordinates'));
+    public function showCoordinates()
+    {
+        $reservoirs = Reservoir::all()->where('status', true);
+        return view('reservoir.show', compact('reservoirs'));
+    }
+
+    public function showUnacceptedCoordinates()
+    {
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                $reservoirs = Reservoir::all()->where('status', false);
+                return view('reservoir.unacceptedShow', compact('reservoirs'));
+            }
+        }
+
+        return redirect()->route('home')->with('error', 'Tikai administrators var apskatīt neakceptētās ūdenstilpnes');
     }
 
     /**
@@ -53,12 +71,14 @@ class ReservoirController extends Controller
     /**
      * @param Request $request
      */
-    public function saveCoordinates(Request $request) {
+    public function saveCoordinates(Request $request)
+    {
         $reservoir = array(
             'name' => $request->name,
             'lat' => $request->lat,
             'long' => $request->long,
-            'type' => $request->type
+            'type' => $request->type,
+            'status' => Auth::user()->role == self::ADMIN ? true : false
         );
 
         $reservoir = Reservoir::create($reservoir);
@@ -84,7 +104,8 @@ class ReservoirController extends Controller
      * @param Reservoir $reservoir
      * @return Reservoir[]|array|\Illuminate\Database\Eloquent\Collection
      */
-    public function getCoordinateEdit($reservoir) {
+    public function getCoordinateEdit($reservoir)
+    {
         try {
             $data = DB::table('coordinates')->where('reservoir_id', $reservoir)->get();
             $data->toJson();
@@ -99,7 +120,8 @@ class ReservoirController extends Controller
         return $data;
     }
 
-    public function getCoordinates() {
+    public function getCoordinates()
+    {
         try {
             $data = DB::table('coordinates')->get()->all();
             json_encode($data);
@@ -121,7 +143,7 @@ class ReservoirController extends Controller
     public function show()
     {
         try {
-            $data = Reservoir::all();
+            $data = Reservoir::all()->where('status', true);
             $data->toJson();
         }
         catch (\mysql_xdevapi\Exception $exception) {
@@ -142,10 +164,30 @@ class ReservoirController extends Controller
      */
     public function edit(Reservoir $reservoir)
     {
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                $fishes = Fish::all(['id', 'name']);
+                $coordinate = DB::table('coordinates')->where('reservoir_id', $reservoir->id)->first();
+                $addedFishes = DB::table('fish_reservoir')->where('reservoir_id', $reservoir->id)->get();
+                return view('reservoir.edit', compact('fishes', 'reservoir', 'coordinate', 'addedFishes'));
+            }
+        }
+
+        return redirect()->route('home')->with('error', 'Tikai administrators var rediģēt ūdenstilpni!');
+    }
+
+    public function showSingleReservoir($id)
+    {
+        if (!Reservoir::find($id)) {
+            return redirect()->route('home')->with('error', 'Ūdenstilpne neeksistē datubāzē.');
+        }
+
         $fishes = Fish::all(['id', 'name']);
+        $reservoir = Reservoir::find($id);
         $coordinate = DB::table('coordinates')->where('reservoir_id', $reservoir->id)->first();
         $addedFishes = DB::table('fish_reservoir')->where('reservoir_id', $reservoir->id)->get();
-        return view('reservoir.edit', compact('fishes', 'reservoir', 'coordinate', 'addedFishes'));
+
+        return view('reservoir.single', compact('fishes', 'reservoir', 'coordinate', 'addedFishes'));
     }
 
     /**
@@ -186,9 +228,39 @@ class ReservoirController extends Controller
         }
     }
 
+    public function acceptCoordinates($id)
+    {
+        if (Reservoir::find($id)) {
+            return redirect()->route('home')->with('error', 'Datubāzē nav neakceptētās ūdenstilpnes dati.');
+        }
+
+        if (!Auth::guest()) {
+            if (Auth::user()->role == self::ADMIN) {
+                $reservoir = Reservoir::find($id);
+                $reservoir->status = true;
+                $reservoir->save();
+
+                return redirect()->route('show')->with('success', 'Ūdenstilpne tika akceptēta!');
+            }
+        }
+
+        return redirect()->route('home')->with('error', 'Ūdenstilpne var akceptēt tikai administrators!');
+    }
+
     public function removeDataBeforeUpdate($id) {
         DB::table('fish_reservoir')->where('reservoir_id', $id)->delete();
         DB::table('coordinates')->where('reservoir_id', $id)->delete();
+    }
+
+    public function removeDataBeforeDelete($id)
+    {
+        DB::table('fish_reservoir')->where('reservoir_id', $id)->delete();
+        DB::table('coordinates')->where('reservoir_id', $id)->delete();
+        $forum =  DB::table('forums')->where('reservoir_id', $id);
+        if(isset($forum)) {
+            DB::table('comments')->where('forum_id', $forum->get()->first()->id)->delete();
+            $forum->delete();
+        }
     }
 
 
@@ -198,11 +270,23 @@ class ReservoirController extends Controller
      */
     public function destroy($id)
     {
-        $reservoir = Reservoir::find($id);
-        $reservoir->delete();
-        $this->removeDataBeforeUpdate($id);
+        if (!Reservoir::find($id)) {
+            return redirect()->route('show')
+                ->with('error','Ūdenstilpne neeksistē datubāzē.');
+        }
+
+        if (!Auth::guest()) {
+          if(Auth::user()->role == self::ADMIN) {
+              $reservoir = Reservoir::find($id);
+              $reservoir->delete();
+              $this->removeDataBeforeDelete($id);
+
+              return redirect()->route('show')
+                  ->with('success','Ūdenstilpne tika izdzēsta');
+          }
+        }
 
         return redirect()->route('show')
-            ->with('success','Reservoir updated successfully');
+            ->with('error','Tikai administrators var izdzēst ūdenstilpni!');
     }
 }

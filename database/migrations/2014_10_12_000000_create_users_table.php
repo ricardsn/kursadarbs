@@ -17,12 +17,19 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('image')->nullable();
+            $table->string('role');
             $table->rememberToken();
             $table->timestamps();
         });
+
+        DB::table('users')->insert([
+            'name' => "admin",
+            'email' => "root@admin.com",
+            'password' => Hash::make("admin"),
+            'role' => 'administrator',
+        ]);
     }
 
     /**

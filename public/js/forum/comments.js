@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10982,8 +10982,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   var url = window.location.pathname;
   var commentField = document.getElementById('comments');
+  var commentErrorField = $('#comment-error');
   var users = [];
   var comments = [];
+  var currUser = null;
   var saveButton = document.getElementById("publish-comment");
   var pages = 0;
   var page = 0;
@@ -11001,10 +11003,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       success: function success(data) {
         users = data.user_data;
         comments = data.comments;
+        currUser = data.curr_user;
         comments.sort(function (first, second) {
           return new Date(second.created_at) - new Date(first.created_at);
         });
         commentField.innerText = '';
+        commentErrorField.hide();
 
         if (comments.length > 0) {
           comments.forEach(function (comment) {
@@ -11029,37 +11033,83 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   loadComments();
 
-  saveButton.onclick = function () {
-    var commentData = $('#comment-block').val();
-    var id = window.location.pathname.replace('/forum/', '');
-    $.ajax({
-      method: "POST",
-      url: "/comment/store",
-      dataType: 'html',
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      data: {
-        commentData: commentData,
-        reservoirId: id
-      },
-      success: function success() {
-        loadComments();
-        page = 0;
-        pageCount.innerText = page + 1;
-      },
-      error: function error(jqXHR, textStatus, errorThrown) {
-        console.log(JSON.stringify(jqXHR));
-        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-        alert('Error occured look into console logs');
+  function validation(commentData) {
+    var message = [];
+
+    if (commentData === '') {
+      message.push('Komentāra saturs ir tukšs.');
+    }
+
+    if (currUser === null) {
+      message.push('Neautorizēts lietotājs nevar pievienot komentāru.');
+    }
+
+    return message;
+  }
+
+  if (saveButton) {
+    saveButton.onclick = function () {
+      var commentData = $('#comment-block').val();
+      var id = window.location.pathname.replace('/forum/', '');
+      var messages = validation(commentData);
+      commentErrorField.html('');
+      commentErrorField.hide();
+
+      if (messages.length !== 0) {
+        var message = '';
+        $.each(messages, function (index, error) {
+          message += error + '<br />';
+        });
+        commentErrorField.html(message);
+        commentErrorField.show();
+        return;
       }
-    });
-  };
+
+      $.ajax({
+        method: "POST",
+        url: "/comment/store",
+        dataType: 'html',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+          commentData: commentData,
+          reservoirId: id
+        },
+        success: function success() {
+          loadComments();
+          page = 0;
+          pageCount.innerText = page + 1;
+        },
+        error: function error(jqXHR, textStatus, errorThrown) {
+          console.log(JSON.stringify(jqXHR));
+          console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+          alert('Error occured look into console logs');
+        }
+      });
+    };
+  }
 
   function updateComment() {
     var commentId = this.id.replace('button-', '');
-    var commentData = $('#comment-edit-data' + commentId).val();
+    var commentField = $('#comment-edit-data' + commentId);
+    var commentData = commentField.val();
     var commentBlock = this.parentNode.parentNode.parentNode.classList[0];
+    var messages = validation(commentData);
+    var errorCommentField = $('#error-comment-edit');
+    errorCommentField.html('');
+    errorCommentField.hide();
+
+    if (messages.length !== 0) {
+      var message = '';
+      $.each(messages, function (index, error) {
+        message += error + '<br />';
+      });
+      errorCommentField.html(message);
+      errorCommentField.show();
+      return;
+    }
+
     $.ajax({
       method: "PATCH",
       url: "/comment/".concat(commentId),
@@ -11098,6 +11148,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var editCommentBlock = document.createElement('div');
     var textarea = document.createElement('textarea');
     var button = document.createElement('button');
+    var errorMsg = document.createElement('div');
 
     if (!document.getElementById('button-' + commentId)) {
       textarea.name = 'comment-edit-data' + commentId;
@@ -11108,7 +11159,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       button.classList.add('btn');
       button.classList.add('btn-success');
       button.innerText = 'Rediģēt';
+      errorMsg.classList.add('alert');
+      errorMsg.classList.add('alert-danger');
+      errorMsg.id = 'error-comment-edit';
+      errorMsg.style.display = 'none';
       editCommentBlock.classList.add('comment-edit');
+      editCommentBlock.appendChild(errorMsg);
       editCommentBlock.appendChild(textarea);
       editCommentBlock.appendChild(button);
       commentBlock.appendChild(editCommentBlock);
@@ -11154,9 +11210,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   }
 
+  function addOptions(commentData) {
+    if (currUser) {
+      if (currUser === commentData.user_id) {
+        return '<div class="nav-item dropdown">\n' + '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' + '                    </div>\n' + '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n' + '                        <a class="dropdown-item edit" id="' + commentData.id + '">Rediģēt</a>\n' + '                        <a class="dropdown-item delete" id="delete' + commentData.id + '">Dzēst</a>\n' + '                    </div>\n' + '                </div>';
+      }
+    }
+
+    return '';
+  }
+
   function insertComment(commentData) {
     var div = document.createElement('div');
-    var options = '<div class="nav-item dropdown">\n' + '                    <div class="comment-dropdown dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' + '                    </div>\n' + '                    <div class="dropdown-menu" aria-labelledby="navbarDropdowns">\n' + '                        <a class="dropdown-item edit" id="' + commentData.id + '">Rediģēt</a>\n' + '                        <a class="dropdown-item delete" id="delete' + commentData.id + '">Dzēst</a>\n' + '                    </div>\n' + '                </div>';
+    var options = addOptions(commentData);
     div.innerHTML = ' <div class="card card-white post">\n' + options + '                <div class="post-heading">\n' + '                    <div class="float-left meta">\n' + '                        <div class="title h5">\n' + '                            <a href="#"><b>' + getUserName(commentData.user_id) + '</b></a>\n' + '                            komentēja: \n' + '                        </div>\n' + '                        <h6 class="text-muted time">Pievienots: ' + new Date(commentData.created_at).toISOString().replace(/T/, ' ').replace(/\..+/, '') + '</h6>\n' + '                    </div>\n' + '                </div> \n' + '                <div class="post-description"> \n' + '                    <p>' + commentData.content + '</p>\n' + '\n' + '                </div>\n' + '            </div>';
     return div;
   }
@@ -11246,7 +11312,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 5:
+/***/ 6:
 /*!*******************************************!*\
   !*** multi ./resources/js/forum/comments ***!
   \*******************************************/

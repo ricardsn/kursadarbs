@@ -30,9 +30,9 @@
                             @auth
                                 @if(Auth::user()->role == 'administrator')
                                     <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/reservoir'), $reservoir->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">Dzēst</button>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Dzēst</button>
                                 @endif
                             @endauth
                         </form>
@@ -42,7 +42,7 @@
             </tbody>
         </table>
     @else
-        <div class="alert alert-danger">Datubāzē nav ūdenstilpņu dati.</div>
+        <div class="alert alert-danger">Datubāzē nav ieteikto ūdenstilpņu dati.</div>
     @endif
 @endsection
 <b></b>

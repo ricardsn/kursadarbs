@@ -17,8 +17,8 @@ class CreateCoordinatesTable extends Migration
             $table->id()->autoIncrement();
             $table->foreignId('reservoir_id');
             $table->foreign('reservoir_id')->references('id')->on('reservoirs');
-            $table->decimal('lat');
-            $table->decimal('long');
+            $table->double('lat');
+            $table->double('long');
             $table->integer('radius');
             $table->timestamps();
         });

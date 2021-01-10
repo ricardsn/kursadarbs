@@ -98,13 +98,11 @@ define([
     function addStoreToMapSearch(reservoir, coordinate) {
         let marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] +'</br>'+ reservoir['type'] + '</br>' + insertLink(reservoir['id']));
         markers.addLayer(marker);
-        // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
     }
 
     function addStoreToMapLoad(reservoir) {
         let marker = L.marker([reservoir['lat'], reservoir['long']], {icon: customIcon}).bindPopup(reservoir['name']+ '</br>' + reservoir['type']  + '</br>' + insertLink(reservoir['id']));
         markers.addLayer(marker);
-        // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
     }
 
     let search = BootstrapGeocoder.search({
@@ -186,11 +184,45 @@ define([
         return result;
     }
 
+    function validate(select, address, radius) {
+        let errorMsg = [];
+        const selection = select[select.selectedIndex].value;
+
+        if (selection !== 'Ezers' && selection !== 'Upe') {
+            errorMsg.push('Tips neeksistē sistēmas izvēlnē.');
+        }
+
+        if (address.val() === '') {
+            errorMsg.push('Adrese ir obligāta');
+        }
+
+        if (Number.isInteger(radius) || radius < 1) {
+            errorMsg.push('Rādiuss nav naturāls skaitlis.');
+        }
+        console.log(address.val())
+        return errorMsg;
+    }
+
     searchButton.onclick = () => {
         displayReservoirs = [];
         markers.clearLayers();
         let searchedReservoirs = [];
         let selection = typeSelector[0].options;
+        const errorContainer = $('#js-errors');
+        const errorMsg = validate(selection,searchInput, radius);
+
+        errorContainer.html('');
+
+        if(errorMsg.length !== 0) {
+            let message = '';
+
+            $.each(errorMsg, function (index, error) {
+                message += error + '<br />';
+            });
+            errorContainer.html(message);
+            return;
+        }
+
         markers.addLayer(L.marker(location, {icon: customIcon}).bindPopup('Jūs atrodaties šeit'));
         if (selection[selection.selectedIndex].value === 'Ezers') {
             searchedReservoirs = lakes;

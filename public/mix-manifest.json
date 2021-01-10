@@ -7,6 +7,7 @@
     "/js/forum/fish-listing.js": "/js/forum/fish-listing.js",
     "/js/map/create-map.js": "/js/map/create-map.js",
     "/js/map/edit-map.js": "/js/map/edit-map.js",
+    "/js/map/single-map.js": "/js/map/single-map.js",
     "/js/profile/edit.js": "/js/profile/edit.js",
     "/js/vendor/app.js": "/js/vendor/app.js",
     "/js/water-map.js": "/js/water-map.js"

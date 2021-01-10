@@ -18,10 +18,14 @@
                 <td>
                     <form action="{{ route('forum.destroy',$forum->id) }}" method="POST">
                         <a href="{{ sprintf('%s/%s', \Illuminate\Support\Facades\URL::to('/forum'), $forum->reservoir_id)  }}" class="btn btn-success">Apskatīt</a>
-                        <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/forum'), $forum->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Dzēst</button>
+                        @auth
+                            @if(Auth::user()->role == 'administrator')
+                                <a href="{{ sprintf('%s/%s/%s', \Illuminate\Support\Facades\URL::to('/forum'), $forum->id,'edit')  }}" class="btn btn-info">Rediģēt</a>
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Dzēst</button>
+                            @endif
+                        @endauth
                     </form>
                 </td>
             </tr>

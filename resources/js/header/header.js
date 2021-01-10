@@ -6,7 +6,7 @@ if (url[1] === '') {
     header.innerText = 'Makšķerēšanas klubs';
     jumbotron.classList.add('Pike');
 } else if (url[1] === 'reservoir') {
-    header.innerText = 'Karte';
+    header.innerText = 'Ūdenstilpne';
     jumbotron.classList.add('Zander');
 } else {
     header.innerText = 'Default';

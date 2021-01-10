@@ -26,7 +26,10 @@ Route::any('/reservoir/saveCoordinates', [ReservoirController::class, 'saveCoord
 Route::any('/reservoir/{reservoirId}/update', [ReservoirController::class, 'update']);
 Route::get('/reservoir/getCoordinates', [ReservoirController::class, 'getCoordinates']);
 Route::get('/reservoir/showCoordinates', [ReservoirController::class, 'showCoordinates'])->name('show');
+Route::get('/reservoir/showUnacceptedCoordinates', [ReservoirController::class, 'showUnacceptedCoordinates'])->name('unaccepted');
+Route::any('/reservoir/{reservoirId}/acceptCoordinates', [ReservoirController::class, 'acceptCoordinates'])->name('acceptCoordinates');
 Route::get('/reservoir/{reservoirId}/getCoordinateEdit', [ReservoirController::class, 'getCoordinateEdit']);
+Route::get('/reservoir/{reservoirId}/showSingleReservoir', [ReservoirController::class, 'showSingleReservoir']);
 Route::get('/forum/{forumId}/getComments', [ForumController::class, 'getComments']);
 Route::any('/forum/{forumId}/update', [ForumController::class, 'update'])->name('updateForum');
 Route::any('/fish/storeFish', [FishController::class, 'storeFish']);
@@ -40,6 +43,8 @@ Route::resource('fish', FishController::class);
 
 Auth::routes();
 Route::any('/profile',[ProfileController::class, 'index'])->name('profile');
+Route::any('/profile/getEmails',[ProfileController::class, 'getEmails'])->name('getEmails');
+
 Route::any('/uploadImage',[ProfileController::class, 'addImage'])->name('uploadImage');
 Route::any('/changePassword',[ProfileController::class, 'changePassword'])->name('changePassword');
 Route::post('/saveNewPassword',[ProfileController::class, 'saveNewPassword'])->name('saveNewPassword');
