@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -42,7 +41,7 @@ class PasswordReset extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
+        return (new MailMessage) //changing to latvian text
                     ->greeting('Sveiki!')
                     ->line(' Epasts tika atsūtīts, jo ir bijis pieprasījums pēc paroles nomaiņas.')
                     ->action('Nomainīt paroli', url('password/reset', $this->token))

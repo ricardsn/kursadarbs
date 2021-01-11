@@ -25077,6 +25077,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       mymap.addLayer(markers);
 
       if (!(coordinates.length > 300)) {
+        //if reservoir has less than 300 coordinates added zooms it more
         mymap.setView([coordinates[0]['lat'], coordinates[0]['long']], 10);
       }
     },
@@ -25086,6 +25087,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   });
 
   function addStoreToMapLoad(coordinate) {
+    //displaying coordinates in map
     var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']);
     markers.addLayer(marker);
   }

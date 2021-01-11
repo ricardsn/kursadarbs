@@ -13,25 +13,34 @@ define([
     const saveButton = document.getElementById("publish-comment");
     let pages = 0;
     let page = 0;
-    const commentActionUrl = window.location.origin;
     let pageCount = document.createElement('div');
+    let commentCount = 0;
     const pageCounter = document.getElementById('pageCount');
     pageCount.innerText = page + 1;
     pageCounter.appendChild(pageCount)
-    function loadComments(page = null) {
+
+    function loadComments(page = null) { //getting comment data
         $.ajax({
             url: `${url}/getComments`,
             dataFormat: 'json',
             success: function (data) {
                 users = data.user_data;
                 comments = data.comments;
+                commentCount = data.comments.length;
+
+                if (commentCount <= 10) { //arrows shows and hides depending on comment count
+                    $('.forum-arrows').hide();
+                } else {
+                    $('.forum-arrows').show();
+                }
+
                 currUser = data.curr_user;
-                comments.sort(function (first,second) {
+                comments.sort(function (first,second) { //order comment in desc order
                     return new Date(second.created_at) - new Date(first.created_at);
                 });
                 commentField.innerText = '';
                 commentErrorField.hide();
-                if(comments.length > 0) {
+                if(comments.length > 0) { //if any comment data is gained display it and divide into pages
                     comments.forEach(comment => {
                         commentField.appendChild(insertComment(comment))
                     });
@@ -51,9 +60,9 @@ define([
         });
     }
 
-    loadComments();
+    loadComments(); //loading comments on page load
 
-    function validation(commentData) {
+    function validation(commentData) { //validate data before saving
         let message = [];
 
         if (commentData === '') {
@@ -69,50 +78,55 @@ define([
 
     if (saveButton) {
         saveButton.onclick = () => {
-            const commentData = $('#comment-block').val();
-            const id = window.location.pathname.replace('/forum/','');
-            const messages = validation(commentData);
-
-            commentErrorField.html('');
-            commentErrorField.hide();
-
-            if(messages.length !== 0) {
-                let message = '';
-
-                $.each(messages, function (index, error) {
-                    message += error + '<br />';
-                });
-                commentErrorField.html(message);
-                commentErrorField.show();
-                return;
-            }
-
-            $.ajax({
-                method: "POST",
-                url: "/comment/store",
-                dataType: 'html',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    commentData: commentData,
-                    reservoirId: id
-                },
-                success: function() {
-                    loadComments();
-                    page = 0;
-                    pageCount.innerText = page + 1;
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(JSON.stringify(jqXHR));
-                    console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-                    alert('Error occured look into console logs')
-                }
-            });
+            saveComment();
         };
     }
 
-    function updateComment() {
+    function saveComment() {
+        const commentData = $('#comment-block').val();
+        const id = window.location.pathname.replace('/forum/','');
+        const messages = validation(commentData);
+
+        commentErrorField.html(''); //clearing error msgs
+        commentErrorField.hide();
+
+        if(messages.length !== 0) { //displaying error msgs if any
+            let message = '';
+
+            $.each(messages, function (index, error) {
+                message += error + '<br />';
+            });
+            commentErrorField.html(message);
+            commentErrorField.show();
+            return;
+        }
+
+        $.ajax({ //send comment data to controller
+            method: "POST",
+            url: "/comment/store",
+            dataType: 'html',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                commentData: commentData,
+                reservoirId: id
+            },
+            success: function() {
+                loadComments();
+                page = 0;
+                pageCount.innerText = page + 1;
+                commentCount++;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+                console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                alert('Error occured look into console logs')
+            }
+        });
+    }
+
+    function updateComment() { //updating comments
         const commentId = (this.id).replace('button-', '');
         const commentField =  $('#comment-edit-data'+commentId);
         const commentData = commentField.val();
@@ -123,7 +137,7 @@ define([
         errorCommentField.html('');
         errorCommentField.hide();
 
-        if(messages.length !== 0) {
+        if(messages.length !== 0) { //displaying errors if any
             let message = '';
 
             $.each(messages, function (index, error) {
@@ -134,7 +148,7 @@ define([
             return;
         }
 
-        $.ajax({
+        $.ajax({ //sending data to controller
             method: "PATCH",
             url: `/comment/${commentId}`,
             dataType: 'html',
@@ -145,7 +159,7 @@ define([
                 commentData: commentData
             },
             success: function() {
-                loadComments(commentBlock);
+                loadComments(commentBlock); //reloading data
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(JSON.stringify(jqXHR));
@@ -155,7 +169,7 @@ define([
         });
     }
 
-    function saveCommentPage(commentClass) {
+    function saveCommentPage(commentClass) { //remembering page when delete occur
         const comments = $('#comments').children();
 
         comments.each(function (i, comment) {
@@ -167,7 +181,7 @@ define([
         });
     }
 
-    function onClickEditComment() {
+    function onClickEditComment() { //load edit data and render fields
         const commentId = this.id;
         const commentBlock = this.parentNode.parentNode.parentNode;
         const editCommentBlock = document.createElement('div');
@@ -196,7 +210,7 @@ define([
         }
     }
 
-    function onClickDeleteComment() {
+    function onClickDeleteComment() { //delete comment
         let commentId = (this.id).replace('delete', '');
 
         $.ajax({
@@ -207,7 +221,8 @@ define([
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function() {
-                loadComments();
+                loadComments(); //reloading comments
+                commentCount--;
                 alert('Komentārs tika izdzēsts!')
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -218,7 +233,7 @@ define([
         });
     }
 
-    function addDeleteFuncOption() {
+    function addDeleteFuncOption() { // adding delete functionality to all comments
         let comments = commentField.getElementsByClassName('delete');
         for (let i = 0; i < comments.length; i++) {
             let comment = comments[i];
@@ -226,7 +241,7 @@ define([
         }
     }
 
-    function addEditFuncOption() {
+    function addEditFuncOption() { // adding edit functionality to all comments
         let comments = commentField.getElementsByClassName('edit');
 
         for (let i = 0; i < comments.length; i++) {
@@ -235,6 +250,7 @@ define([
         }
     }
 
+    //rendering options to comment
     function addOptions(commentData) {
         if(currUser) {
             if(currUser === commentData.user_id) {
@@ -253,7 +269,7 @@ define([
 
         return '';
     }
-
+    //remderomg comment with user and comment data
     function insertComment(commentData) {
         const div = document.createElement('div');
         const options = addOptions(commentData);
@@ -277,7 +293,7 @@ define([
         return div;
     }
 
-    function getUserName(userId) {
+    function getUserName(userId) { //returns user name
         let returnResult = 'Anonymous';
 
         users.forEach(user => {
@@ -289,7 +305,7 @@ define([
         return returnResult;
     }
 
-    function loadAfterSort() {
+    function loadAfterSort() { //reload after sort
         commentField.innerText = '';
         if(comments.length > 0) {
             comments.forEach(comment => {
@@ -306,7 +322,7 @@ define([
         }
     }
 
-    function divideIntoPages() {
+    function divideIntoPages() { //dividing comments into pages
         const childNodes = $('#comments').children().length;
         const maxCommentsPerPage = 10;
         let comments = 0;
@@ -322,7 +338,7 @@ define([
         }
     }
 
-    $('.next').on('click',function(){
+    $('.next').on('click',function(){ //moving through pages
         if(page < pages - 1) {
             $("#comments > div:visible").hide();
             $('.page' + ++page).show();
@@ -330,11 +346,11 @@ define([
         }
     });
 
-    $('.forum-arrows').on('click', function () {
+    $('.forum-arrows').on('click', function () { //adding page counter
         pageCount.innerText = page + 1;
     });
 
-    $('.prev').on('click',function(){
+    $('.prev').on('click',function() { //moving through pages
         if(page > 0) {
             $("#comments > div:visible").hide();
             $('.page' + --page).show();
@@ -342,7 +358,7 @@ define([
         }
     });
 
-    $('#order-selector').on('change', function () {
+    $('#order-selector').on('change', function () { //sorts comments
        if($('#order-selector').val() === 'newest') {
            comments.sort(function (first,second) {
                return new Date(second.created_at) - new Date(first.created_at);

@@ -60679,8 +60679,6 @@ __webpack_require__(/*! ./header/header */ "./resources/js/header/header.js");
 
 __webpack_require__(/*! ./water-map */ "./resources/js/water-map.js");
 
-__webpack_require__(/*! ./map/create-dropdown */ "./resources/js/map/create-dropdown.js");
-
 /***/ }),
 
 /***/ "./resources/js/bootstrap.js":
@@ -60737,6 +60735,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function ($) {
   window.onscroll = function () {
+    //adding scroll top possibility
     if (window.scrollY > 500) {
       $('.hook').show("fast");
     } else {
@@ -60766,33 +60765,22 @@ var url = window.location.pathname.split('/');
 var jumbotron = document.getElementsByClassName('jumbotron')[0];
 
 if (url[1] === '') {
+  //changing text and image depending on module
   header.innerText = 'Makšķerēšanas klubs';
   jumbotron.classList.add('Pike');
 } else if (url[1] === 'reservoir') {
   header.innerText = 'Ūdenstilpne';
   jumbotron.classList.add('Zander');
+} else if (url[1] === 'forum') {
+  header.innerText = 'Diskusija';
+  jumbotron.classList.add('Pike');
+} else if (url[1] === 'fish') {
+  header.innerText = 'Zivs suga';
+  jumbotron.classList.add('Zander');
 } else {
-  header.innerText = 'Default';
-  jumbotron.classList.add('Default');
+  header.innerText = 'Profils';
+  jumbotron.classList.add('Pike');
 }
-
-/***/ }),
-
-/***/ "./resources/js/map/create-dropdown.js":
-/*!*********************************************!*\
-  !*** ./resources/js/map/create-dropdown.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-$(document).ready(function () {
-  $('#fish-dropdown').multiselect({
-    nonSelectedText: 'Select fishes',
-    enableFiltering: true,
-    enableCaseInsensitiveFiltering: true,
-    buttonWidth: '400px'
-  });
-});
 
 /***/ }),
 
@@ -61273,7 +61261,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var location = null;
   var searchButton = document.getElementById('searchButton');
   var reservoirs = null;
-  var displayReservoirs = [];
   var coordinates = null;
   var rivers = [];
   var lakes = [];
@@ -61284,7 +61271,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     tileSize: 512,
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoicmljYXJkc24iLCJhIjoiY2tnY2xmODJmMDdwbDJ4cXgxZmI0NjIwYyJ9.HpPK7-zynFDLXr3Akf4B1A'
-  }).addTo(mymap);
+  }).addTo(mymap); //initializing map
+
   var customIcon = L.icon({
     iconUrl: 'images/vendor/leaflet/dist/marker-icon.png',
     iconSize: [20, 30],
@@ -61295,6 +61283,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   });
   $.ajax({
+    //retrieving coordinate data
     url: '/reservoir/getCoordinates',
     dataFormat: 'json',
     success: function success(data) {
@@ -61323,7 +61312,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     success: function success(data) {
       reservoirs = data;
       $.each(reservoirs, function (index, reservoir) {
-        addStoreToMapLoad(reservoir);
+        //splitting reservoirs into two groups - lakes and rivers
+        addReservoirToMapLoad(reservoir);
 
         if (reservoir.type === 'Ezers') {
           lakes.push(reservoir);
@@ -61331,7 +61321,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
           rivers.push(reservoir);
         }
       });
-      mymap.addLayer(markers);
+      mymap.addLayer(markers); //displaying reservoirs
     },
     error: function error(err) {
       alert("Error : " + JSON.stringify(err));
@@ -61339,16 +61329,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   });
 
   function insertLink(id) {
+    //adding link to marker
     var link = '<a href="' + window.location.origin + '/forum/' + id + '">Vairāk informācijas</a>';
     return link;
   }
 
-  function addStoreToMapSearch(reservoir, coordinate) {
+  function addReservoirToMapSearch(reservoir, coordinate) {
+    //displaying closest marker with data
     var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']).bindPopup(reservoir['name'] + '</br>' + reservoir['type'] + '</br>' + insertLink(reservoir['id']));
     markers.addLayer(marker);
   }
 
-  function addStoreToMapLoad(reservoir) {
+  function addReservoirToMapLoad(reservoir) {
+    //displaying reservoir marker with data on load
     var marker = L.marker([reservoir['lat'], reservoir['long']], {
       icon: customIcon
     }).bindPopup(reservoir['name'] + '</br>' + reservoir['type'] + '</br>' + insertLink(reservoir['id']));
@@ -61356,6 +61349,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   var search = BootstrapGeocoder.search({
+    //adding to map search from plugin
     inputTag: 'address-search',
     placeholder: 'To find nearest store, enter your address here...',
     zoomToResult: false,
@@ -61363,6 +61357,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     allowMultipleResults: false
   }).addTo(mymap);
   selector.change(function () {
+    //updating radius data
     var selection = selector[0].options;
 
     if (selection[selection.selectedIndex].value !== 'All') {
@@ -61373,11 +61368,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   });
   search.on('results', function (data) {
+    //getting coordinates of searched address
     location = data.latlng;
     searchInput[0].value = data.text;
   });
 
   function getReservoirCoordinates(reservoir) {
+    //returning all coordinates of specific reservoir
     var reservoirCoordinates = [];
     $.each(coordinates, function (index, coordinate) {
       if (coordinate.reservoir_id === reservoir.id) {
@@ -61389,12 +61386,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   function getDistance(reservoir) {
     //formula from https://www.movable-type.co.uk/scripts/latlong.html
-    //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
-    var reservoirCoordinates = getReservoirCoordinates(reservoir);
+    var reservoirCoordinates = getReservoirCoordinates(reservoir); //retrieving all specific reservoir coordinates
+
     var closestCoordinateDistance = null;
     var closestCoordinate = null;
     $.each(reservoirCoordinates, function (index, coordinate) {
-      var lat1 = parseFloat(coordinate['lat']);
+      //getting closest coordinate from specific reservoir
+      var lat1 = parseFloat(coordinate['lat']); //getting coordinates of searched location and reservoirs coordinate
+
       var lat2 = location.lat;
       var lon1 = parseFloat(coordinate['long']);
       var lon2 = location.lng;
@@ -61405,9 +61404,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       var dLa = (lon2 - lon1) * Math.PI / 180;
       var a = Math.sin(dFi / 2) * Math.sin(dFi / 2) + Math.cos(fi1) * Math.cos(fi2) * Math.sin(dLa / 2) * Math.sin(dLa / 2);
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      var distance = R * c - parseFloat(coordinate['radius']);
+      var distance = R * c - parseFloat(coordinate['radius']); //calculating distance in meters with Harvesine forumla
 
       if (closestCoordinateDistance === null) {
+        //with comparing finds closest coordinate of reservoir
         closestCoordinateDistance = distance;
         closestCoordinate = coordinate;
       } else if (closestCoordinateDistance > distance) {
@@ -61419,10 +61419,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       coordinate: closestCoordinate,
       distance: closestCoordinateDistance
     };
-    return result;
+    return result; //returning closest coordinate of specific reservoir
   }
 
   function validate(select, address, radius) {
+    //validating search input
     var errorMsg = [];
     var selection = select[select.selectedIndex].value;
 
@@ -61438,20 +61439,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       errorMsg.push('Rādiuss nav naturāls skaitlis.');
     }
 
-    console.log(address.val());
     return errorMsg;
   }
 
   searchButton.onclick = function () {
-    displayReservoirs = [];
+    startSearch();
+  };
+
+  function startSearch() {
     markers.clearLayers();
     var searchedReservoirs = [];
     var selection = typeSelector[0].options;
     var errorContainer = $('#js-errors');
-    var errorMsg = validate(selection, searchInput, radius);
+    var errorMsg = validate(selection, searchInput, radius); //validate befor search
+
     errorContainer.html('');
 
     if (errorMsg.length !== 0) {
+      //adding validation error messages if any
       var message = '';
       $.each(errorMsg, function (index, error) {
         message += error + '<br />';
@@ -61462,7 +61467,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     markers.addLayer(L.marker(location, {
       icon: customIcon
-    }).bindPopup('Jūs atrodaties šeit'));
+    }).bindPopup('Jūs atrodaties šeit')); //displaying location of search in map
 
     if (selection[selection.selectedIndex].value === 'Ezers') {
       searchedReservoirs = lakes;
@@ -61471,21 +61476,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     $.each(searchedReservoirs, function (index, reservoir) {
+      //comparing each reservoirs closest coordinate with radius if it fits in it is added to map
       var reservoirDist = getDistance(reservoir);
 
       if (reservoirDist.distance <= radius * 1000) {
-        //parseFloat(reservoir['lat']), location.lat, parseFloat(reservoir['long']), location.lng
-        displayReservoirs.push(reservoir);
-        addStoreToMapSearch(reservoir, reservoirDist.coordinate);
+        addReservoirToMapSearch(reservoir, reservoirDist.coordinate);
       }
     });
     mymap.addLayer(markers);
-  };
+  }
 
   function addAllReservoirsToMap() {
+    //display all reservoir markers
     markers.clearLayers();
     $.each(reservoirs, function (index, reservoir) {
-      addStoreToMapLoad(reservoir);
+      addReservoirToMapLoad(reservoir);
     });
     mymap.addLayer(markers);
   }

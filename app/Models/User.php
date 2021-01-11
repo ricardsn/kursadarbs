@@ -42,7 +42,7 @@ class User extends Authenticatable
      * @param  string  $token
      * @return void
      */
-    public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token) //overriding e-mail text by attaching new template located in App\Notifications\PasswordReset
     {
         $this->notify(new PasswordReset($token));
     }

@@ -25058,8 +25058,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var markers = L.layerGroup();
   var radiusSelector = document.getElementById('radius-select');
   var saveButton = document.getElementById('save-reservoir');
-  var url = window.location.pathname.replace('/edit', ''); // let createMap = L.map('createmap').setView([56.9496, 24.1052], 7);
-
+  var url = window.location.pathname.replace('/edit', '');
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -25072,12 +25071,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   mymap.addLayer(markers);
 
   function setRadius() {
+    //if radius is changed clears all coordinates in map and arrays
     coordinates = [];
     markers.clearLayers();
     radius = radiusSelector.value;
   }
 
   $.ajax({
+    //getting all specific reservoir coordinates from reservoir controller
     url: "".concat(url, "/getCoordinateEdit"),
     dataFormat: 'json',
     data: {},
@@ -25085,7 +25086,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
       coordinates = data;
       radius = coordinates[0].radius;
       $.each(coordinates, function (index, coordinate) {
-        addStoreToMapLoad(coordinate);
+        //display coordinates on load
+        addReservoirToMapLoad(coordinate);
       });
       mymap.addLayer(markers);
     },
@@ -25094,13 +25096,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   });
 
-  function addStoreToMapLoad(coordinate) {
+  function addReservoirToMapLoad(coordinate) {
+    //display coordinate
     var marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']);
-    markers.addLayer(marker); // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
+    markers.addLayer(marker);
   }
 
   function validate(name, lat, _long, radius, type, fishes) {
-    var nameValidator = new RegExp(/^[a-žA-Ž\s]+$/);
+    var nameValidator = new RegExp(/^[a-žA-Ž\s]+$/); //consists only from letters
+
     var errorMsg = [];
 
     if (name.length < 3) {
@@ -25112,10 +25116,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     if (!$.isNumeric(lat) || !$.isNumeric(_long)) {
+      //coordinates is decimal
       errorMsg.push('Ūdenstilpnes koordinātēm ir jābūt decimālskaitlim.');
     }
 
     if (Number.isInteger(radius) || radius < 1) {
+      //natural number
       errorMsg.push('Rādiuss nav naturāls skaitlis.');
     }
 
@@ -25135,6 +25141,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   saveButton.onclick = function () {
+    editReservoir();
+  };
+
+  function editReservoir() {
     var name = $('#name').val();
     var lat = $('#lat').val();
 
@@ -25145,9 +25155,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var fishes = $('#fish-dropdown').val();
     var errorContainer = $('#js-errors');
     var errorMsg = validate(name, lat, _long2, radius, type, fishes);
-    errorContainer.innerText = '';
+    errorContainer.innerText = ''; //clearing all error messages
 
     if (errorMsg.length !== 0) {
+      //displaying error messages if any
       var message = '';
       $.each(errorMsg, function (index, error) {
         message += error + '<br />';
@@ -25157,6 +25168,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     $.ajax({
+      //sending all data to controller
       method: "POST",
       url: "".concat(url, "/update"),
       dataType: 'html',
@@ -25170,10 +25182,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         radius: radius,
         type: type,
         fishes: fishes,
-        coordinates: JSON.stringify(coordinates)
+        coordinates: JSON.stringify(coordinates) //json encoding coordinates
+
       },
       success: function success(data) {
-        alert('Successfully updated!');
+        alert('Veiksmīgi atjaunots!');
       },
       error: function error(jqXHR, textStatus, errorThrown) {
         console.log(JSON.stringify(jqXHR));
@@ -25181,11 +25194,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         alert('Error occured look into console logs');
       }
     });
-  };
+  }
 
   mymap.on('click', addMarker);
 
   function addMarker(e) {
+    //uzspiežot uz kartes atzīmējas koordināte
     // Add marker to reservoir at click location
     var newMarker = new L.circle(e.latlng, parseInt(radius)).addTo(mymap);
     markers.addLayer(newMarker);

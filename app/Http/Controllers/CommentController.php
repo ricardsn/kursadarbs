@@ -30,10 +30,10 @@ class CommentController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created comment in database.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -43,8 +43,8 @@ class CommentController extends Controller
             return redirect()->route('home')->with('error', 'Nevar pievienot komentāru neeksistējošai diskusijai. ');
         }
 
-        $userId = Auth::user()->getAuthIdentifier();
-        $commentData = $request->commentData;
+        $userId = Auth::user()->getAuthIdentifier(); //getting auth id
+        $commentData = $request->commentData; //getting comment data
 
         $comment = [
             'content' => $commentData,
@@ -52,7 +52,7 @@ class CommentController extends Controller
             'user_id' => $userId
         ];
 
-        Comment::create($comment)->save();
+        Comment::create($comment)->save(); //saving to database
     }
 
     /**
@@ -78,7 +78,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified comment in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Comment  $comment
@@ -99,7 +99,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the comment resource from database.
      *
      * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response

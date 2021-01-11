@@ -19,7 +19,7 @@ class Reservoir extends Model
 
     protected $primaryKey = 'id';
 
-    public function fishes()
+    public function fishes() //function that adds fishes to model
     {
         return $this->belongsToMany(Fish::class);
     }

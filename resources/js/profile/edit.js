@@ -14,14 +14,14 @@ define([
     let changeImage = false;
     let imageFile = null;
 
-    $('#uploaded-image').change(function () {
+    $('#uploaded-image').change(function () { //if image is uploaded adds it to formData
         if($(this).prop('files').length > 0) {
             imageFile = $(this).prop('files')[0];
             formData.append('image',imageFile);
         }
     });
 
-    $.ajax({
+    $.ajax({ //retrieving emails that are already taken
         method: "GET",
         url: `/profile/getEmails`,
         dataType: 'html',
@@ -36,22 +36,22 @@ define([
         }
     });
 
-    function getData() {
+    function getData() { //getting all inputed data
         formData.append('name',  $('#name').val());
         formData.append('email', $('#email').val());
-        formData.append('isImageChanged', changeImage);
+        formData.append('isImageChanged', changeImage); //if image change was requested
         formData.append('_method', 'PUT')
     }
 
-    function validation() {
+    function validation() { //validating edit data
         let message = [];
-        const emailValidator = new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');
+        const emailValidator = new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'); //email check
 
-        if ($.inArray($('#email').val(), takenEmails) === 1) {
+        if ($.inArray($('#email').val(), takenEmails) === 1) { //checks if email is not already used
             message.push('Norādītā e-pasta adrese jau ir izmantota.');
         }
 
-        if (!emailValidator.test($('#email').val())) {
+        if (!emailValidator.test($('#email').val())) { //validate email
             message.push('E-pasts ir nepareiza formāta.');
         }
 
@@ -60,11 +60,11 @@ define([
         }
 
         if(changeImage) {
-            if(imageFile.size > 2147484) {
+            if(imageFile.size > 2147484) { //checking if size is not bigger than 2,048MB
                 message.push('Bildes svars ir lielāks par 2,048 MB.')
             }
 
-            if (!(imageFile.type === 'image/jpeg'
+            if (!(imageFile.type === 'image/jpeg' //checking image format
                 || imageFile.type === 'image/png'
                 || imageFile.type === 'image/jpg'
                 || imageFile.type === 'image/gif'
@@ -77,12 +77,16 @@ define([
     }
 
     uploadButton.onclick = () => {
-        getData();
+       updateProfile();
+    }
+
+    function updateProfile() {
+        getData(); //reading all data from inputs
         const errorMsg = validation();
 
-        errorContainer.html('');
+        errorContainer.html(''); //clearing all error msg
 
-        if(errorMsg.length !== 0) {
+        if(errorMsg.length !== 0) { //display errors if any
             let message = '';
 
             $.each(errorMsg, function (index, error) {
@@ -93,7 +97,7 @@ define([
             return;
         }
 
-        $.ajax({
+        $.ajax({ //posting data to user controller
             method: "POST",
             url: `saveEditProfile`,
             dataType: 'html',

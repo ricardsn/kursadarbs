@@ -14,10 +14,9 @@ use Illuminate\Support\Facades\DB;
 class ForumController extends Controller
 {
     const ADMIN = 'administrator';
-    const REG_USER = 'registered_user';
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the forums.
      *
      * @return \Illuminate\Http\Response
      */
@@ -28,7 +27,7 @@ class ForumController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new forum.
      *
      * @return \Illuminate\Http\Response
      */
@@ -36,7 +35,7 @@ class ForumController extends Controller
     {
         if (!Auth::guest()) {
             if (Auth::user()->role == self::ADMIN) {
-                $possibleForms = $this->getFutureForms();
+                $possibleForms = $this->getFutureForms(); //getting list of reservoirs, that don't have forums yet
                 return view('forum.create', compact('possibleForms'));
             }
         }
@@ -62,7 +61,14 @@ class ForumController extends Controller
         return $futureForms;
     }
 
-    public function hasForum($reservoir) {
+    /**
+     * Checks if reservoir has forum or not
+     *
+     * @param $reservoir
+     * @return bool
+     */
+    public function hasForum($reservoir): bool
+    {
         if (DB::table('forums')->where('reservoir_id', $reservoir->id)->count() > 0) {
            return true;
         }
@@ -71,6 +77,8 @@ class ForumController extends Controller
     }
 
     /**
+     * Sends to frontend all comment and user data via Ajax call
+     *
      * @param $reservoirId
      * @return array
      */
@@ -81,7 +89,7 @@ class ForumController extends Controller
             $data = [
               'comments' => Comment::where('forum_id', $forumId)->get(),
               'user_data' => User::all('id', 'name'),
-              'curr_user' => Auth::guest() ? null : Auth::id()
+              'curr_user' => Auth::guest() ? null : Auth::id() //checks if user is signed
             ];
             json_encode($data);
         }
@@ -97,6 +105,8 @@ class ForumController extends Controller
 
 
     /**
+     * Storing form data
+     *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -118,11 +128,19 @@ class ForumController extends Controller
         return redirect()->route('forum.create')->with('error-array',$message)->withInput($request->all());
     }
 
+    /**
+     * Validating forum data
+     *
+     * @param $title
+     * @param $desc
+     * @param $reservoirId
+     * @return array
+     */
     public function validation($title, $desc, $reservoirId)
     {
         $message = [];
 
-        if (strlen($title) < 8 || !preg_match('/^[a-žA-Ž\s]+$/', $title)) {
+        if (strlen($title) < 8 || !preg_match('/^[a-žA-Ž\s]+$/', $title)) { //using regex to check if consists of only letters
             array_push($message, 'Diskusijas nosaukums ir mazāks par 8 burtiem vai satur simbolus, kas nav latīniski burti.');
         }
 
@@ -139,6 +157,8 @@ class ForumController extends Controller
 
 
     /**
+     * Returning specific forum view with fishes, comments are got by another function and displayed with JS
+     *
      * @param $forum
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
@@ -160,13 +180,15 @@ class ForumController extends Controller
 
 
     /**
+     * Returns forum edit view with reservoirs that doesn't have form yet
+     *
      * @param Forum $forum
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function edit(Forum $forum)
     {
         if (!Auth::guest()) {
-            if (Auth::user()->role == self::ADMIN) {
+            if (Auth::user()->role == self::ADMIN) { //checks if admin
                 $possibleForms = $this->getFutureForms();
                 return view('forum.edit', compact('forum', 'possibleForms'));
             }
@@ -177,6 +199,8 @@ class ForumController extends Controller
 
 
     /**
+     * Updating forum data
+     *
      * @param Request $request
      * @param $forumId
      * @return \Illuminate\Http\RedirectResponse
@@ -198,6 +222,8 @@ class ForumController extends Controller
 
 
     /**
+     * Deleting forum data
+     *
      * @param $forumId
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -208,8 +234,8 @@ class ForumController extends Controller
         }
 
         if (!Auth::guest()) {
-            if (Auth::user()->role == self::ADMIN) {
-                DB::table('comments')->where('forum_id', $forumId)->delete();
+            if (Auth::user()->role == self::ADMIN) { //checks if admin
+                DB::table('comments')->where('forum_id', $forumId)->delete(); //deleting all comments that were attached to forum
                 $forum = Forum::find($forumId);
                 $forum->delete();
                 return redirect()->route('forum.index')

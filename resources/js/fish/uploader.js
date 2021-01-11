@@ -9,22 +9,22 @@ define([
     let formData = null;
     let imageFile = null;
 
-    $('#uploaded-image').change(function () {
-        formData = new FormData();
+    $('#uploaded-image').change(function () { //if image was uploaded
+       formData = new FormData();
        if($(this).prop('files').length > 0) {
            imageFile = $(this).prop('files')[0];
-           formData.append('image', imageFile);
+           formData.append('image', imageFile); //adding image data to formData
        }
     });
 
-    function getData() {
+    function getData() { //read input
         formData.append('name',  $('#name').val());
         formData.append('link', $('#link').val());
     }
 
-    function validation() {
+    function validation() { //validate input
         let message = [];
-        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/);
+        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/); //name consists of letters and whitespaces only
         const name = $('#name').val();
         const link = $('#link').val();
 
@@ -36,11 +36,11 @@ define([
             message.push('Saites simbolu skaits ir mazāks par 8.');
         }
 
-       if (imageFile.size > 2147484) {
+       if (imageFile.size > 2147484) { //checking size of image
            message.push('Bildes svars ir lielāks par 2,048 MB.');
        }
 
-       if (!(imageFile.type === 'image/jpeg'
+       if (!(imageFile.type === 'image/jpeg' //checking type of image
            || imageFile.type === 'image/png'
            || imageFile.type === 'image/jpg'
            || imageFile.type === 'image/gif'
@@ -52,13 +52,17 @@ define([
     }
 
     uploadButton.onclick = () => {
+       createFish();
+    }
+
+    function createFish() {
         getData();
 
         const errorMsg = validation();
 
-        errorContainer.html('');
+        errorContainer.html(''); //clear messages
 
-        if(errorMsg.length !== 0) {
+        if(errorMsg.length !== 0) { //display errors if any
             let message = '';
 
             $.each(errorMsg, function (index, error) {
@@ -69,7 +73,7 @@ define([
             return;
         }
 
-        $.ajax({
+        $.ajax({ //saving fish species data
             method: "POST",
             url: `storeFish`,
             dataType: 'html',

@@ -3,7 +3,7 @@ define([
 ], function(
     $
 ) {
-   window.onscroll = () => {
+   window.onscroll = () => { //adding scroll top possibility
        if (window.scrollY > 500) {
            $('.hook').show("fast");
        } else {

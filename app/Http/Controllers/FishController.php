@@ -11,10 +11,9 @@ use Illuminate\Http\Request;
 class FishController extends Controller
 {
     const ADMIN = 'administrator';
-    const REG_USER = 'registered_user';
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of fish resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -25,14 +24,14 @@ class FishController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new fish species.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
         if (!Auth::guest()) {
-            if (Auth::user()->role == self::ADMIN) {
+            if (Auth::user()->role == self::ADMIN) { //checking if user is admin
                 return view('fish.create');
             }
         }
@@ -52,14 +51,16 @@ class FishController extends Controller
     }
 
     /**
+     * Store a newly created fish specie in database.
+     *
      * @param Request $request
      */
     public function storeFish(Request $request) {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $imageName = time().'.'.$request->image->extension();
-        $request->image->move(public_path('images/fishes'), $imageName);
+        $imageName = time().'.'.$request->image->extension(); //renaming to unique
+        $request->image->move(public_path('images/fishes'), $imageName); //saving to pub folder
 
         $fish = array(
             'name' => $request->name,
@@ -67,11 +68,11 @@ class FishController extends Controller
             'image' => $imageName
         );
 
-        Fish::create($fish);
+        Fish::create($fish); //creating fish specie
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified fish specie.
      *
      * @param  \App\Models\Fish  $fish
      * @return \Illuminate\Http\Response
@@ -86,7 +87,7 @@ class FishController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified fish specie.
      *
      * @param  \App\Models\Fish  $fish
      * @return \Illuminate\Http\Response
@@ -94,7 +95,7 @@ class FishController extends Controller
     public function edit(Fish $fish)
     {
         if (!Auth::guest()) {
-            if (Auth::user()->role == self::ADMIN) {
+            if (Auth::user()->role == self::ADMIN) { //checking if admin
                 return view('fish.edit', compact('fish'));
             }
         }
@@ -103,7 +104,7 @@ class FishController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified fish specie in database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Fish  $fish
@@ -116,10 +117,10 @@ class FishController extends Controller
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('images/fishes'), $imageName);
+            $imageName = time().'.'.$request->image->extension(); //renaming to unique
+            $request->image->move(public_path('images/fishes'), $imageName); //moving to public forlder
             $image_path = sprintf('%s/images/fishes/%s', public_path(), $fish->image);
-            if(File::exists($image_path)) {
+            if(File::exists($image_path)) { //deleting previously saved image
                 File::delete($image_path);
             }
         }
@@ -130,11 +131,13 @@ class FishController extends Controller
             'image' => $imageName ? $imageName : $fish->image
         );
 
-        $fish->update($fish_update);
+        $fish->update($fish_update); //updating specie
     }
 
 
     /**
+     * Deleting the specified fish specie in database.
+     *
      * @param Fish $fish
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
@@ -147,12 +150,12 @@ class FishController extends Controller
 
         if (!Auth::guest()) {
             if (Auth::user()->role == self::ADMIN) {
-                DB::table('fish_reservoir')->where('fish_id', $fish->id)->delete();
+                DB::table('fish_reservoir')->where('fish_id', $fish->id)->delete(); //removing fish from reservoir
                 $image_path = sprintf('%s/images/fishes/%s', public_path(), $fish->image);
-                if(File::exists($image_path)) {
+                if(File::exists($image_path)) { //deleting fish image
                     File::delete($image_path);
                 }
-                $fish->delete();
+                $fish->delete(); //deleting fish specie
 
                 return redirect()->route('fish.index')
                     ->with('success','Zivs suga tika izdzēsta!');

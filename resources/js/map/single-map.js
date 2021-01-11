@@ -33,7 +33,7 @@ define([
                 addStoreToMapLoad(coordinate);
             });
             mymap.addLayer(markers);
-            if(!(coordinates.length > 300)) {
+            if(!(coordinates.length > 300)) { //if reservoir has less than 300 coordinates added zooms it more
                 mymap.setView([coordinates[0]['lat'], coordinates[0]['long']], 10);
             }
         },
@@ -42,7 +42,7 @@ define([
         }
     });
 
-    function addStoreToMapLoad(coordinate) {
+    function addStoreToMapLoad(coordinate) { //displaying coordinates in map
         let marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']);
         markers.addLayer(marker);
     }

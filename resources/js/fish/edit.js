@@ -15,14 +15,14 @@ define([
     const path = window.location.origin;
     let imageFile = null;
 
-    $('#uploaded-image').change(function () {
+    $('#uploaded-image').change(function () { //if image is uploaded
         if($(this).prop('files').length > 0) {
             imageFile = $(this).prop('files')[0];
-            formData.append('image', imageFile);
+            formData.append('image', imageFile); //saving image data to formData
         }
     });
 
-    function getData() {
+    function getData() { //reading all input
         formData.append('name',  $('#name').val());
         formData.append('link', $('#link').val());
         formData.append('isImageChanged', changeImage);
@@ -31,7 +31,7 @@ define([
 
     function validation() {
         let message = [];
-        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/);
+        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/); //name consists only form letters and whitespaces
         const name = $('#name').val();
         const link = $('#link').val();
 
@@ -44,11 +44,11 @@ define([
         }
 
         if(changeImage) {
-            if(imageFile.size > 2147484) {
+            if(imageFile.size > 2147484) { //checking size of image
                 message.push('Bildes svars ir lielāks par 2,048 MB.')
             }
 
-            if (!(imageFile.type === 'image/jpeg'
+            if (!(imageFile.type === 'image/jpeg' //checkong type of image
                 || imageFile.type === 'image/png'
                 || imageFile.type === 'image/jpg'
                 || imageFile.type === 'image/gif'
@@ -60,14 +60,14 @@ define([
         return message;
     }
 
-    uploadButton.onclick = () => {
+    function editFish() {
         getData();
 
         const errorMsg = validation();
 
-        errorContainer.html('');
+        errorContainer.html(''); //clearing errors
 
-        if(errorMsg.length !== 0) {
+        if(errorMsg.length !== 0) { //display errors if any
             let message = '';
 
             $.each(errorMsg, function (index, error) {
@@ -78,7 +78,7 @@ define([
             return;
         }
 
-        $.ajax({
+        $.ajax({ //sending data to controller
             method: "POST",
             url: `${path}/fish/${fishId}`,
             dataType: 'html',
@@ -95,6 +95,10 @@ define([
                 alert("Error : " + JSON.stringify(err));
             }
         });
+    }
+
+    uploadButton.onclick = () => {
+        editFish();
     }
 
     changeButton.onclick = () => {

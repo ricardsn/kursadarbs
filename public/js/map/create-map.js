@@ -25057,8 +25057,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var coordinates = [];
   var markers = L.layerGroup();
   var radiusSelector = document.getElementById('radius-select');
-  var saveButton = document.getElementById('save-reservoir'); // let createMap = L.map('createmap').setView([56.9496, 24.1052], 7);
-
+  var saveButton = document.getElementById('save-reservoir');
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
@@ -25071,13 +25070,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   mymap.addLayer(markers);
 
   function setRadius() {
+    //clear markers if radius is changed
     coordinates = [];
     markers.clearLayers();
     radius = radiusSelector.value;
   }
 
   function validate(name, lat, _long, radius, type, fishes) {
-    var nameValidator = new RegExp(/^[a-žA-Ž\s]+$/);
+    //validate create data
+    var nameValidator = new RegExp(/^[a-žA-Ž\s]+$/); //consists only from letters
+
     var errorMsg = [];
 
     if (name.length < 3) {
@@ -25089,10 +25091,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     if (!$.isNumeric(lat) || !$.isNumeric(_long)) {
+      //is decimal
       errorMsg.push('Ūdenstilpnes koordinātēm ir jābūt decimālskaitlim.');
     }
 
     if (Number.isInteger(radius) || radius < 1) {
+      //natural digit
       errorMsg.push('Rādiuss nav naturāls skaitlis.');
     }
 
@@ -25112,6 +25116,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   saveButton.onclick = function () {
+    saveReservoir();
+  };
+
+  function saveReservoir() {
     var name = $('#name').val();
     var lat = $('#lat').val();
 
@@ -25122,9 +25130,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var fishes = $('#fish-dropdown').val();
     var errorContainer = $('#js-errors');
     var errorMsg = validate(name, lat, _long2, radius, type, fishes);
-    errorContainer.html('');
+    errorContainer.html(''); //clearing error messages
 
     if (errorMsg.length !== 0) {
+      //displaying error msg if any
       var message = '';
       $.each(errorMsg, function (index, error) {
         message += error + '<br />';
@@ -25134,6 +25143,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     $.ajax({
+      //sending reservoir data to controller
       method: "POST",
       url: "/reservoir/saveCoordinates",
       dataType: 'html',
@@ -25158,7 +25168,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         alert('Error occured look into console logs');
       }
     });
-  };
+  }
 
   mymap.on('click', addMarker);
 

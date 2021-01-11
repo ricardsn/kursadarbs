@@ -10990,12 +10990,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var changeImage = false;
   var imageFile = null;
   $('#uploaded-image').change(function () {
+    //if image is uploaded adds it to formData
     if ($(this).prop('files').length > 0) {
       imageFile = $(this).prop('files')[0];
       formData.append('image', imageFile);
     }
   });
   $.ajax({
+    //retrieving emails that are already taken
     method: "GET",
     url: "/profile/getEmails",
     dataType: 'html',
@@ -11011,21 +11013,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   });
 
   function getData() {
+    //getting all inputed data
     formData.append('name', $('#name').val());
     formData.append('email', $('#email').val());
-    formData.append('isImageChanged', changeImage);
+    formData.append('isImageChanged', changeImage); //if image change was requested
+
     formData.append('_method', 'PUT');
   }
 
   function validation() {
+    //validating edit data
     var message = [];
-    var emailValidator = new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');
+    var emailValidator = new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'); //email check
 
     if ($.inArray($('#email').val(), takenEmails) === 1) {
+      //checks if email is not already used
       message.push('Norādītā e-pasta adrese jau ir izmantota.');
     }
 
     if (!emailValidator.test($('#email').val())) {
+      //validate email
       message.push('E-pasts ir nepareiza formāta.');
     }
 
@@ -11035,10 +11042,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
     if (changeImage) {
       if (imageFile.size > 2147484) {
+        //checking if size is not bigger than 2,048MB
         message.push('Bildes svars ir lielāks par 2,048 MB.');
       }
 
-      if (!(imageFile.type === 'image/jpeg' || imageFile.type === 'image/png' || imageFile.type === 'image/jpg' || imageFile.type === 'image/gif' || imageFile.type === 'image/svg')) {
+      if (!(imageFile.type === 'image/jpeg' //checking image format
+      || imageFile.type === 'image/png' || imageFile.type === 'image/jpg' || imageFile.type === 'image/gif' || imageFile.type === 'image/svg')) {
         message.push('Derīgie bildes formāti - jpeg, png, jpg, gif un svg.');
       }
     }
@@ -11047,11 +11056,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   uploadButton.onclick = function () {
-    getData();
+    updateProfile();
+  };
+
+  function updateProfile() {
+    getData(); //reading all data from inputs
+
     var errorMsg = validation();
-    errorContainer.html('');
+    errorContainer.html(''); //clearing all error msg
 
     if (errorMsg.length !== 0) {
+      //display errors if any
       var message = '';
       $.each(errorMsg, function (index, error) {
         message += error + '<br />';
@@ -11062,6 +11077,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     $.ajax({
+      //posting data to user controller
       method: "POST",
       url: "saveEditProfile",
       dataType: 'html',
@@ -11078,7 +11094,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         alert("Error : " + JSON.stringify(err));
       }
     });
-  };
+  }
 
   changeButton.onclick = function () {
     changeContent.style.display = 'none';

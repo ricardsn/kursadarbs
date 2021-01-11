@@ -10989,28 +10989,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   var saveButton = document.getElementById("publish-comment");
   var pages = 0;
   var page = 0;
-  var commentActionUrl = window.location.origin;
   var pageCount = document.createElement('div');
+  var commentCount = 0;
   var pageCounter = document.getElementById('pageCount');
   pageCount.innerText = page + 1;
   pageCounter.appendChild(pageCount);
 
   function loadComments() {
     var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    //getting comment data
     $.ajax({
       url: "".concat(url, "/getComments"),
       dataFormat: 'json',
       success: function success(data) {
         users = data.user_data;
         comments = data.comments;
+        commentCount = data.comments.length;
+
+        if (commentCount <= 10) {
+          //arrows shows and hides depending on comment count
+          $('.forum-arrows').hide();
+        } else {
+          $('.forum-arrows').show();
+        }
+
         currUser = data.curr_user;
         comments.sort(function (first, second) {
+          //order comment in desc order
           return new Date(second.created_at) - new Date(first.created_at);
         });
         commentField.innerText = '';
         commentErrorField.hide();
 
         if (comments.length > 0) {
+          //if any comment data is gained display it and divide into pages
           comments.forEach(function (comment) {
             commentField.appendChild(insertComment(comment));
           });
@@ -11031,9 +11043,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     });
   }
 
-  loadComments();
+  loadComments(); //loading comments on page load
 
   function validation(commentData) {
+    //validate data before saving
     var message = [];
 
     if (commentData === '') {
@@ -11049,48 +11062,57 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
   if (saveButton) {
     saveButton.onclick = function () {
-      var commentData = $('#comment-block').val();
-      var id = window.location.pathname.replace('/forum/', '');
-      var messages = validation(commentData);
-      commentErrorField.html('');
-      commentErrorField.hide();
-
-      if (messages.length !== 0) {
-        var message = '';
-        $.each(messages, function (index, error) {
-          message += error + '<br />';
-        });
-        commentErrorField.html(message);
-        commentErrorField.show();
-        return;
-      }
-
-      $.ajax({
-        method: "POST",
-        url: "/comment/store",
-        dataType: 'html',
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: {
-          commentData: commentData,
-          reservoirId: id
-        },
-        success: function success() {
-          loadComments();
-          page = 0;
-          pageCount.innerText = page + 1;
-        },
-        error: function error(jqXHR, textStatus, errorThrown) {
-          console.log(JSON.stringify(jqXHR));
-          console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-          alert('Error occured look into console logs');
-        }
-      });
+      saveComment();
     };
   }
 
+  function saveComment() {
+    var commentData = $('#comment-block').val();
+    var id = window.location.pathname.replace('/forum/', '');
+    var messages = validation(commentData);
+    commentErrorField.html(''); //clearing error msgs
+
+    commentErrorField.hide();
+
+    if (messages.length !== 0) {
+      //displaying error msgs if any
+      var message = '';
+      $.each(messages, function (index, error) {
+        message += error + '<br />';
+      });
+      commentErrorField.html(message);
+      commentErrorField.show();
+      return;
+    }
+
+    $.ajax({
+      //send comment data to controller
+      method: "POST",
+      url: "/comment/store",
+      dataType: 'html',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        commentData: commentData,
+        reservoirId: id
+      },
+      success: function success() {
+        loadComments();
+        page = 0;
+        pageCount.innerText = page + 1;
+        commentCount++;
+      },
+      error: function error(jqXHR, textStatus, errorThrown) {
+        console.log(JSON.stringify(jqXHR));
+        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        alert('Error occured look into console logs');
+      }
+    });
+  }
+
   function updateComment() {
+    //updating comments
     var commentId = this.id.replace('button-', '');
     var commentField = $('#comment-edit-data' + commentId);
     var commentData = commentField.val();
@@ -11101,6 +11123,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     errorCommentField.hide();
 
     if (messages.length !== 0) {
+      //displaying errors if any
       var message = '';
       $.each(messages, function (index, error) {
         message += error + '<br />';
@@ -11111,6 +11134,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     $.ajax({
+      //sending data to controller
       method: "PATCH",
       url: "/comment/".concat(commentId),
       dataType: 'html',
@@ -11121,7 +11145,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         commentData: commentData
       },
       success: function success() {
-        loadComments(commentBlock);
+        loadComments(commentBlock); //reloading data
       },
       error: function error(jqXHR, textStatus, errorThrown) {
         console.log(JSON.stringify(jqXHR));
@@ -11132,6 +11156,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function saveCommentPage(commentClass) {
+    //remembering page when delete occur
     var comments = $('#comments').children();
     comments.each(function (i, comment) {
       if (comment.classList.contains(commentClass)) {
@@ -11143,6 +11168,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function onClickEditComment() {
+    //load edit data and render fields
     var commentId = this.id;
     var commentBlock = this.parentNode.parentNode.parentNode;
     var editCommentBlock = document.createElement('div');
@@ -11172,6 +11198,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function onClickDeleteComment() {
+    //delete comment
     var commentId = this.id.replace('delete', '');
     $.ajax({
       method: "DELETE",
@@ -11181,7 +11208,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function success() {
-        loadComments();
+        loadComments(); //reloading comments
+
+        commentCount--;
         alert('Komentārs tika izdzēsts!');
       },
       error: function error(jqXHR, textStatus, errorThrown) {
@@ -11193,6 +11222,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function addDeleteFuncOption() {
+    // adding delete functionality to all comments
     var comments = commentField.getElementsByClassName('delete');
 
     for (var i = 0; i < comments.length; i++) {
@@ -11202,13 +11232,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function addEditFuncOption() {
+    // adding edit functionality to all comments
     var comments = commentField.getElementsByClassName('edit');
 
     for (var i = 0; i < comments.length; i++) {
       var comment = comments[i];
       comment.onclick = onClickEditComment;
     }
-  }
+  } //rendering options to comment
+
 
   function addOptions(commentData) {
     if (currUser) {
@@ -11218,7 +11250,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
 
     return '';
-  }
+  } //remderomg comment with user and comment data
+
 
   function insertComment(commentData) {
     var div = document.createElement('div');
@@ -11228,6 +11261,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function getUserName(userId) {
+    //returns user name
     var returnResult = 'Anonymous';
     users.forEach(function (user) {
       if (user.id === userId) {
@@ -11238,6 +11272,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function loadAfterSort() {
+    //reload after sort
     commentField.innerText = '';
 
     if (comments.length > 0) {
@@ -11257,6 +11292,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   function divideIntoPages() {
+    //dividing comments into pages
     var childNodes = $('#comments').children().length;
     var maxCommentsPerPage = 10;
     var comments = 0;
@@ -11274,6 +11310,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
   }
 
   $('.next').on('click', function () {
+    //moving through pages
     if (page < pages - 1) {
       $("#comments > div:visible").hide();
       $('.page' + ++page).show();
@@ -11283,9 +11320,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   });
   $('.forum-arrows').on('click', function () {
+    //adding page counter
     pageCount.innerText = page + 1;
   });
   $('.prev').on('click', function () {
+    //moving through pages
     if (page > 0) {
       $("#comments > div:visible").hide();
       $('.page' + --page).show();
@@ -11295,6 +11334,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     }
   });
   $('#order-selector').on('change', function () {
+    //sorts comments
     if ($('#order-selector').val() === 'newest') {
       comments.sort(function (first, second) {
         return new Date(second.created_at) - new Date(first.created_at);

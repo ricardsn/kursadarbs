@@ -13,7 +13,7 @@ define([
     const radiusSelector = document.getElementById('radius-select');
     const saveButton = document.getElementById('save-reservoir');
     const url = window.location.pathname.replace('/edit','');
-    // let createMap = L.map('createmap').setView([56.9496, 24.1052], 7);
+
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -27,13 +27,13 @@ define([
 
     mymap.addLayer(markers);
 
-    function setRadius() {
+    function setRadius() {//if radius is changed clears all coordinates in map and arrays
         coordinates = [];
         markers.clearLayers();
         radius = radiusSelector.value;
     }
 
-    $.ajax({
+    $.ajax({ //getting all specific reservoir coordinates from reservoir controller
         url: `${url}/getCoordinateEdit`,
         dataFormat: 'json',
         data: {
@@ -42,8 +42,8 @@ define([
         success: function (data) {
             coordinates = data;
             radius = coordinates[0].radius;
-            $.each(coordinates, function (index, coordinate) {
-                addStoreToMapLoad(coordinate);
+            $.each(coordinates, function (index, coordinate) { //display coordinates on load
+                addReservoirToMapLoad(coordinate);
             });
             mymap.addLayer(markers);
         },
@@ -52,14 +52,13 @@ define([
         }
     });
 
-    function addStoreToMapLoad(coordinate) {
+    function addReservoirToMapLoad(coordinate) { //display coordinate
         let marker = L.circle([coordinate['lat'], coordinate['long']], coordinate['radius']);
         markers.addLayer(marker);
-        // posMarkers.push([parseFloat(store['latitude']),parseFloat(store['longitude'])]);
     }
 
     function validate(name, lat, long, radius, type, fishes) {
-        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/)
+        const nameValidator = new RegExp(/^[a-žA-Ž\s]+$/) //consists only from letters
         const errorMsg = [];
 
         if (name.length < 3) {
@@ -70,11 +69,11 @@ define([
             errorMsg.push('Ūdenstilpnes nosaukumam ir jāsatur no latīniskiem burtiem.');
         }
 
-        if (!$.isNumeric(lat) || !$.isNumeric(long)) {
+        if (!$.isNumeric(lat) || !$.isNumeric(long)) { //coordinates is decimal
             errorMsg.push('Ūdenstilpnes koordinātēm ir jābūt decimālskaitlim.');
         }
 
-        if (Number.isInteger(radius) || radius < 1) {
+        if (Number.isInteger(radius) || radius < 1) { //natural number
             errorMsg.push('Rādiuss nav naturāls skaitlis.');
         }
 
@@ -94,6 +93,10 @@ define([
     }
 
     saveButton.onclick = () => {
+        editReservoir();
+    };
+
+    function editReservoir() {
         const name = $('#name').val();
         const lat = $('#lat').val();
         const long = $('#long').val();
@@ -103,9 +106,9 @@ define([
         const errorContainer = $('#js-errors');
         const errorMsg = validate(name, lat, long, radius, type, fishes);
 
-        errorContainer.innerText = '';
+        errorContainer.innerText = ''; //clearing all error messages
 
-        if(errorMsg.length !== 0) {
+        if(errorMsg.length !== 0) { //displaying error messages if any
             let message = '';
 
             $.each(errorMsg, function (index, error) {
@@ -115,7 +118,7 @@ define([
             return;
         }
 
-        $.ajax({
+        $.ajax({ //sending all data to controller
             method: "POST",
             url:  `${url}/update`,
             dataType: 'html',
@@ -129,10 +132,10 @@ define([
                 radius: radius,
                 type: type,
                 fishes: fishes,
-                coordinates: JSON.stringify(coordinates)
+                coordinates: JSON.stringify(coordinates) //json encoding coordinates
             },
             success: function(data) {
-                alert('Successfully updated!');
+                alert('Veiksmīgi atjaunots!');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(JSON.stringify(jqXHR));
@@ -141,10 +144,11 @@ define([
             }
         });
 
-    };
+    }
 
     mymap.on('click', addMarker);
-    function addMarker(e){
+
+    function addMarker(e){ //uzspiežot uz kartes atzīmējas koordināte
         // Add marker to reservoir at click location
         var newMarker = new L.circle(e.latlng, parseInt(radius)).addTo(mymap);
         markers.addLayer(newMarker);

@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
         });
 
-        DB::table('users')->insert([
+        DB::table('users')->insert([ //inserting auto created admin usser
             'name' => "admin",
             'email' => "root@admin.com",
             'password' => Hash::make("admin"),
