@@ -2,7 +2,7 @@
 @section('content')
     <div class="form-container">
         @csrf
-        <h3>Ūdenstilpnes rediģēšana</h3>
+        <h3>Ūdenstilpnes apskatīšana</h3>
         <div class="form-group">
             <label>Nosaukums</label>
             <input class="form-control" type="text" id="name" name="name" readonly minlength="4" value="{{ $reservoir->name }}">

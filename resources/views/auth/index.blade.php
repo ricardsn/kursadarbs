@@ -26,9 +26,11 @@
             </div>
         </form>
         @else
-            <div class="row">
+            <div class="form-group">
                 <h3>Profila bilde:</h3>
-                <img src="{{sprintf('%s/%s', asset('/images/profile/'),$user->image) }}" style="width: 400px; height: 200px;">
+                <div class="col d-flex align-items-center justify-content-center">
+                    <img src="{{sprintf('%s/%s', asset('/images/profile/'),$user->image) }}" style="width: 400px; height: 200px;">
+                </div>
             </div>
         @endif
     </div>

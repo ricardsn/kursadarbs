@@ -35,7 +35,7 @@
                     <button id="publish-comment" class="btn-success btn">Publicēt</button>
                 </div>
             @endauth
-            <select class="mdb-select md-form" id="order-selector">
+            <select class="mdb-select md-form btn btn-primary dropdown-toggle" id="order-selector">
                 <option value="newest">Jaunākie -> vecākie</option>
                 <option value="oldest">Vecākie -> Jaunākie</option>
             </select>
