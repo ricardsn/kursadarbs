@@ -2,14 +2,14 @@
 @section('content')
     <form class="form-container" method="POST" action="{{  route('forum.store') }}">
         @csrf
-        <h3>Foruma pievienošana</h3>
+        <h3>Diskusijas pievienošana</h3>
         <div class="form-group">
             <label>Nosaukums</label>
-            <input class="form-control" type="text" id="title" name="title" required minlength="4" value="{{ old('title') }}">
+            <input class="form-control" type="text" id="title" name="title"  value="{{ old('title') }}">
         </div>
         <div class="form-group">
             <label>Apraksts</label>
-            <textarea class="form-control" type="text" id="desc" name="desc" required>{{ old('desc') }}</textarea>
+            <textarea class="form-control" type="text" id="desc" name="desc" >{{ old('desc') }}</textarea>
         </div>
         <div class="form-group">
             <label>Ūdenstilpne</label>

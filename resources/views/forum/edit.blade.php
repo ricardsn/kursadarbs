@@ -2,14 +2,14 @@
 @section('content')
     <form class="form-container" method="post" action="{{  route('updateForum', $forum->id) }}">
         @csrf
-        <h3>Foruma rediģēšana</h3>
+        <h3>Diskusijas rediģēšana</h3>
         <div class="form-group">
             <label>Nosaukums</label>
-            <input class="form-control" type="text" id="title" name="title" required minlength="4" value="{{ $forum->title  }}">
+            <input class="form-control" type="text" id="title" name="title"  value="{{ $forum->title  }}">
         </div>
         <div class="form-group">
             <label>Apraksts</label>
-            <textarea class="form-control" type="text" id="desc" name="desc" required> {{ $forum->desc }} </textarea>
+            <textarea class="form-control" type="text" id="desc" name="desc" > {{ $forum->desc }} </textarea>
         </div>
         <div class="form-group">
             <label>Ūdenstilpne</label>

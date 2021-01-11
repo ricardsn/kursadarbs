@@ -28,7 +28,7 @@
                 </div>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdowns" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Forumi
+                        Diskusijas
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdowns">
                         <a class="dropdown-item" href="{{ route('forum.index')  }}">Saraksts</a>

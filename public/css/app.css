@@ -11809,6 +11809,8 @@ footer {
   width: 100%;
   background: rgba(39, 39, 39, 0.8);
   margin-top: 20px;
+  bottom: 0;
+  height: 100px;
 }
 
 footer .hook {
@@ -11832,6 +11834,9 @@ footer .hook-img:hover {
 body {
   background: url(/images/Usma_2.jpg?1fc256d42f86ad2d617a944f2df0c574) fixed no-repeat;
   background-size: cover;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 100px;
 }
 
 .form-container {

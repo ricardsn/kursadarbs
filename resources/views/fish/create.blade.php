@@ -20,8 +20,8 @@
                 </div>
             </div>
         </div>
+        <button class="btn btn-outline-primary my-2 my-sm-0" id="save-fish" type="submit">Pievienot</button>
     </div>
-    <button class="btn btn-outline-primary my-2 my-sm-0" id="save-fish" type="submit">Pievienot</button>
     <script src="{{ asset('js/fish/uploader.js')  }}"></script>
 @endsection
     <b></b>

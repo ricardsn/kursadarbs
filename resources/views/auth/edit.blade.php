@@ -6,11 +6,11 @@
         <h3>Lietotāja rediģēšana</h3>
         <div class="form-group">
             <label>Vārds</label>
-            <input class="form-control" type="text" id="name" name="name" required minlength="4" value="{{ $user->name }}">
+            <input class="form-control" type="text" id="name" name="name" value="{{ $user->name }}">
         </div>
         <div class="form-group">
             <label>E-pasts</label>
-            <input class="form-control" type="email" id="email" name="email" required value="{{ $user->email }}">
+            <input class="form-control" type="email" id="email" name="email"  value="{{ $user->email }}">
         </div>
         <div class="form-group" id="change">
             <img src="{{ asset(sprintf('/images/profile/%s', $user->image))  }}" style="width: 400px; height: 200px; margin: auto" alt="fish image">
