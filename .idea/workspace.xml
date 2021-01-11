@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02e73a82-c55f-4c33-a49b-f92f674fb308" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/commandlinetools/Laravel_11_01_21_16_58.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/images/fishes/1610358516.jpeg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/css/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/app.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/sass/components/footer/_footer.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/sass/components/footer/_footer.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/changePassword.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/changePassword.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/fish/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/fish/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/forum/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/forum/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/forum/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/forum/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/layout/partials/nav.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/layout/partials/nav.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +160,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610377097093</updated>
-      <workItem from="1610377099514" duration="329000" />
+      <workItem from="1610377099514" duration="700000" />
     </task>
     <servers />
   </component>

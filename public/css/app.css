@@ -11811,6 +11811,7 @@ footer {
   margin-top: 20px;
   bottom: 0;
   height: 100px;
+  left: 0;
 }
 
 footer .hook {
