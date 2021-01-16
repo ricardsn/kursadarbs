@@ -263,9 +263,9 @@ class ReservoirController extends Controller
      */
     public function acceptCoordinates($id)
     {
-        if (Reservoir::find($id)) {
-            return redirect()->route('home')->with('error', 'Datubāzē nav neakceptētās ūdenstilpnes dati.');
-        }
+//        if (Reservoir::find($id)) {
+//            return redirect()->route('home')->with('error', 'Datubāzē nav neakceptētās ūdenstilpnes dati.');
+//        }
 
         if (!Auth::guest()) {
             if (Auth::user()->role == self::ADMIN) { //checking if admin
